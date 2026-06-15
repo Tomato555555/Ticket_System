@@ -533,8 +533,16 @@ function switchTab(tab, el) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('view-' + tab).classList.add('active');
+  location.hash = tab; // จำ tab ไว้ใน URL
   if (tab === 'board') { loadTickets().then(() => renderBoard()); }
   if (tab === 'team') renderTeamList();
+}
+function restoreTab() {
+  const hash = location.hash.replace('#','') || 'submit';
+  const tabs = { submit: 0, board: 1, team: 2 };
+  const idx = tabs[hash] ?? 0;
+  const tabBtns = document.querySelectorAll('.nav-tab');
+  if (tabBtns[idx]) switchTab(hash, tabBtns[idx]);
 }
 
 function toast(msg, duration = 3000) {
@@ -747,9 +755,14 @@ function openDetail(id) {
     <div id="log-display">${renderLogs(t.logs)}</div>
 
     <hr class="divider">
-    <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button class="btn" onclick="closeModal()">ปิด</button>
-      <button class="btn btn-primary" onclick="saveDetail('${t.id}')"><i class="ti ti-device-floppy" aria-hidden="true"></i> บันทึก</button>
+    <div style="display:flex;gap:8px;justify-content:space-between;align-items:center">
+      <button class="btn" onclick="deleteTicket('${t.id}')" style="color:#E24B4A;border-color:#F5C4B3">
+        <i class="ti ti-trash" aria-hidden="true"></i> ลบ Ticket
+      </button>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="closeModal()">ปิด</button>
+        <button class="btn btn-primary" onclick="saveDetail('${t.id}')"><i class="ti ti-device-floppy" aria-hidden="true"></i> บันทึก</button>
+      </div>
     </div>
   `;
   document.getElementById('modal-overlay').classList.add('open');
@@ -804,6 +817,14 @@ function saveDetail(id) {
   closeModal();
 }
 
+function deleteTicket(id) {
+  if (!confirm('ลบ Ticket นี้ออกจากระบบ?\nหมายเหตุ: จะลบออกจาก local เท่านั้น\nต้องลบแถวใน Google Sheet ด้วยตนเองครับ')) return;
+  tickets = tickets.filter(t => t.id !== id);
+  saveLocal();
+  toast('ลบ ticket แล้ว');
+  closeModal();
+}
+
 let currentEditId = null;
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
@@ -822,7 +843,7 @@ function saveNote(id) {
 }
 
 loadMembers();
-loadTickets().then(() => { if(document.getElementById('view-board').classList.contains('active')) renderBoard(); });
+restoreTab();
 </script>
 </body>
 </html>
