@@ -494,7 +494,7 @@ async function loadTickets() {
   const lb = document.getElementById('loading-bar');
   if (lb) lb.style.display = 'block';
   // ดึงจาก Google Sheet ก่อน ถ้าไม่ได้ค่อย fallback localStorage
-  if (GAS_URL && GAS_URL !== 'YOUR_APPS_SCRIPT_WEB_APP_URL') {
+  if (GAS_URL && GAS_URL !== 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec') {
     try {
       const url = GAS_URL + '?action=getAll';
       const res = await fetch(url);
@@ -518,7 +518,7 @@ function saveLocal() {
 }
 // sync การอัปเดต ticket กลับไป Sheet
 function syncUpdate(ticket) {
-  if (!GAS_URL || GAS_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL') return;
+  if (!GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec') return;
   sendToSheet({ action:'update', ...ticket });
 }
 function sendToSheet(data) {
@@ -590,7 +590,7 @@ async function submitTicket() {
   tickets.unshift(ticket);
   saveLocal();
 
-  if (GAS_URL && GAS_URL !== 'YOUR_APPS_SCRIPT_WEB_APP_URL') {
+  if (GAS_URL && GAS_URL !== 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec') {
     sendToSheet(ticket);
   }
 
@@ -814,7 +814,12 @@ function saveDetail(id) {
 }
 
 function deleteTicket(id) {
-  if (!confirm('ลบ Ticket นี้ออกจากระบบ?\nหมายเหตุ: จะลบออกจาก local เท่านั้น\nต้องลบแถวใน Google Sheet ด้วยตนเองครับ')) return;
+  if (!confirm('ลบ Ticket นี้? ข้อมูลจะถูกลบออกจาก Google Sheet ด้วย')) return;
+  // ลบใน Sheet
+  if (GAS_URL && GAS_URL !== 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec') {
+    sendToSheet({ action:'delete', id });
+  }
+  // ลบใน local
   tickets = tickets.filter(t => t.id !== id);
   saveLocal();
   toast('ลบ ticket แล้ว');
