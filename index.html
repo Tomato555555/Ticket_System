@@ -433,7 +433,7 @@
 // ============================================================
 // CONFIG — แก้ไขค่านี้หลัง deploy Apps Script
 // ============================================================
-const GAS_URL = 'YOUR_APPS_SCRIPT_WEB_APP_URL';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec';
 // ============================================================
 
 const STORAGE_KEY = 'dash_tickets_v3';
@@ -494,7 +494,7 @@ async function loadTickets() {
   const lb = document.getElementById('loading-bar');
   if (lb) lb.style.display = 'block';
   // ดึงจาก Google Sheet ก่อน ถ้าไม่ได้ค่อย fallback localStorage
-  if (GAS_URL && GAS_URL !== 'YOUR_APPS_SCRIPT_WEB_APP_URL') {
+  if (GAS_URL && GAS_URL !== 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec') {
     try {
       const url = GAS_URL + '?action=getAll';
       const res = await fetch(url);
@@ -518,7 +518,7 @@ function saveLocal() {
 }
 // sync การอัปเดต ticket กลับไป Sheet
 function syncUpdate(ticket) {
-  if (!GAS_URL || GAS_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL') return;
+  if (!GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec') return;
   const payload = { action:'update', ...ticket };
   const url = GAS_URL + '?payload=' + encodeURIComponent(JSON.stringify(payload));
   const img = new Image();
@@ -528,23 +528,15 @@ function genId() {
   return 'TKT-' + String(tickets.length + 1 + Date.now() % 1000).padStart(4,'0').slice(-4);
 }
 
-function switchTab(tab, el) {
+function switchTab(tab, el, skipLoad) {
   document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('view-' + tab).classList.add('active');
-  location.hash = tab; // จำ tab ไว้ใน URL
-  if (tab === 'board') { loadTickets().then(() => renderBoard()); }
+  location.hash = tab;
+  if (tab === 'board' && !skipLoad) { loadTickets().then(() => renderBoard()); }
   if (tab === 'team') renderTeamList();
 }
-function restoreTab() {
-  const hash = location.hash.replace('#','') || 'submit';
-  const tabs = { submit: 0, board: 1, team: 2 };
-  const idx = tabs[hash] ?? 0;
-  const tabBtns = document.querySelectorAll('.nav-tab');
-  if (tabBtns[idx]) switchTab(hash, tabBtns[idx]);
-}
-
 function toast(msg, duration = 3000) {
   const el = document.getElementById('toast');
   el.textContent = msg;
@@ -592,7 +584,7 @@ async function submitTicket() {
   saveLocal();
 
   // ส่งผ่าน Image pixel trick — ไม่มี CORS เลย
-  if (GAS_URL && GAS_URL !== 'YOUR_APPS_SCRIPT_WEB_APP_URL') {
+  if (GAS_URL && GAS_URL !== 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec') {
     const url = GAS_URL + '?payload=' + encodeURIComponent(JSON.stringify(ticket));
     const img = new Image();
     img.src = url;
@@ -843,7 +835,20 @@ function saveNote(id) {
 }
 
 loadMembers();
-restoreTab();
+const _initHash = location.hash.replace('#','') || 'submit';
+const _initIdx = ({submit:0,board:1,team:2})[_initHash] ?? 0;
+const _initBtn = document.querySelectorAll('.nav-tab')[_initIdx];
+if (_initBtn) {
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  _initBtn.classList.add('active');
+  document.getElementById('view-'+_initHash).classList.add('active');
+}
+if (_initHash === 'board') {
+  loadTickets().then(() => renderBoard());
+} else if (_initHash === 'team') {
+  renderTeamList();
+}
 </script>
 </body>
 </html>
