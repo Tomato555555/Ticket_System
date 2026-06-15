@@ -254,6 +254,18 @@
 
     .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; }
     .detail-label { color: var(--text-secondary); }
+    .member-chip { display:inline-flex;align-items:center;gap:5px;padding:3px 10px 3px 5px;background:var(--bg-secondary);border:0.5px solid var(--border);border-radius:999px;font-size:12px;margin:2px; }
+    .member-chip button { border:none;background:none;cursor:pointer;color:var(--text-secondary);padding:0;line-height:1;font-size:14px;font-weight:500; }
+    .member-chip button:hover { color:#E24B4A; }
+    .avatar-sm { width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;background:var(--blue-bg);color:var(--blue-text); }
+    .tl-wrap { border-left:1.5px solid var(--border);padding-left:12px;margin-top:4px; }
+    .tl-item { position:relative;margin-bottom:7px;font-size:12px;color:var(--text-secondary);line-height:1.5; }
+    .tl-item::before { content:'';position:absolute;left:-17px;top:5px;width:7px;height:7px;border-radius:50%;background:var(--border-md);border:1.5px solid var(--bg); }
+    .tl-item.tl-latest::before { background:var(--blue-text); }
+    .status-pills { display:flex;gap:6px;flex-wrap:wrap; }
+    .status-pill { padding:5px 12px;border:0.5px solid var(--border-md);border-radius:999px;font-size:12px;cursor:pointer;background:var(--bg);color:var(--text-secondary);font-family:inherit; }
+    .status-pill.sel { background:var(--text);color:var(--bg);border-color:transparent; }
+    .g2 { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
 
     @media (max-width: 600px) {
       .grid-2, .grid-3 { grid-template-columns: 1fr; }
@@ -275,6 +287,9 @@
     </button>
     <button class="nav-tab" onclick="switchTab('board', this)">
       <i class="ti ti-layout-kanban" aria-hidden="true"></i> ดู Ticket ทั้งหมด
+    </button>
+    <button class="nav-tab" onclick="switchTab('team', this)">
+      <i class="ti ti-users" aria-hidden="true"></i> จัดการทีม
     </button>
   </div>
 </nav>
@@ -374,8 +389,25 @@
     </div>
   </div>
 
+  <!-- TEAM VIEW -->
+  <div id="view-team" class="view">
+    <div class="card">
+      <div class="section-header"><i class="ti ti-users" aria-hidden="true"></i> รายชื่อสมาชิกทีม Dashboard</div>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:1rem">รายชื่อเหล่านี้จะแสดงในตัวเลือกเมื่อ assign คนทำงาน</p>
+      <div id="team-list" style="margin-bottom:1rem"></div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="new-member-input" placeholder="ชื่อสมาชิกใหม่" style="flex:1;font-size:14px" onkeydown="if(event.key==='Enter')addMember()">
+        <button class="btn btn-primary" onclick="addMember()"><i class="ti ti-plus" aria-hidden="true"></i> เพิ่มสมาชิก</button>
+      </div>
+    </div>
+  </div>
+
   <!-- BOARD VIEW -->
   <div id="view-board" class="view">
+    <div id="loading-bar" style="display:none;text-align:center;padding:2rem;color:var(--text-secondary);font-size:13px">
+      <i class="ti ti-loader-2" aria-hidden="true" style="font-size:20px;display:block;margin-bottom:.5rem;animation:spin .8s linear infinite"></i>
+      กำลังโหลดข้อมูลจาก Google Sheet...
+    </div>
     <div class="stats-grid" id="stats-grid"></div>
     <div class="filters">
       <button class="filter-btn active" onclick="setFilter('all',this)">ทั้งหมด</button>
@@ -401,7 +433,7 @@
 // ============================================================
 // CONFIG — แก้ไขค่านี้หลัง deploy Apps Script
 // ============================================================
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec';
+const GAS_URL = 'YOUR_APPS_SCRIPT_WEB_APP_URL';
 // ============================================================
 
 const STORAGE_KEY = 'dash_tickets_v3';
@@ -409,12 +441,88 @@ let tickets = [];
 let currentFilter = 'all';
 const typeLabel = { bug:'แจ้งปัญหา', check:'ขอเช็คข้อมูล/โลจิก', new:'งานใหม่', data:'ขอข้อมูล' };
 const statusLabel = { new:'ใหม่', inprogress:'กำลังทำ', done:'เสร็จแล้ว', pending:'รอข้อมูล' };
+const DEFAULT_MEMBERS = ['อภิสิทธิ์','สมชาย','วิชัย','นภา','ปัทมา','กิตติ','รัตนา','ธนวัฒน์'];
+const MEMBERS_KEY = 'dash_team_members_v1';
+let TEAM_MEMBERS = [];
+function loadMembers() {
+  try { TEAM_MEMBERS = JSON.parse(localStorage.getItem(MEMBERS_KEY) || 'null') || [...DEFAULT_MEMBERS]; } catch(e) { TEAM_MEMBERS = [...DEFAULT_MEMBERS]; }
+}
+function saveMembers() { localStorage.setItem(MEMBERS_KEY, JSON.stringify(TEAM_MEMBERS)); }
+function addMember() {
+  const input = document.getElementById('new-member-input');
+  const name = input.value.trim();
+  if (!name) { toast('⚠️ กรุณากรอกชื่อ'); return; }
+  if (TEAM_MEMBERS.includes(name)) { toast('มีชื่อนี้อยู่แล้ว'); return; }
+  TEAM_MEMBERS.push(name);
+  saveMembers();
+  input.value = '';
+  renderTeamList();
+  toast('เพิ่ม ' + name + ' แล้ว');
+}
+function deleteMember(name) {
+  if (!confirm('ลบ "' + name + '" ออกจากทีม?')) return;
+  TEAM_MEMBERS = TEAM_MEMBERS.filter(m => m !== name);
+  saveMembers();
+  renderTeamList();
+  toast('ลบ ' + name + ' แล้ว');
+}
+function renderTeamList() {
+  const el = document.getElementById('team-list');
+  if (!el) return;
+  if (!TEAM_MEMBERS.length) { el.innerHTML = '<p style="font-size:13px;color:var(--text-secondary)">ยังไม่มีสมาชิก</p>'; return; }
+  el.innerHTML = TEAM_MEMBERS.map((m,i) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border)">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--blue-bg);color:var(--blue-text);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500">${m.slice(0,2)}</div>
+      <span style="flex:1;font-size:14px">${m}</span>
+      <button class="btn btn-sm" onclick="deleteMember('${m}')" style="color:#E24B4A;border-color:#F5C4B3;font-size:12px">
+        <i class="ti ti-trash" aria-hidden="true"></i> ลบ
+      </button>
+    </div>
+  `).join('');
+}
+function initTicket(t) {
+  if(!t.assignees) t.assignees=[];
+  if(!t.supervisor===undefined) t.supervisor='';
+  if(!t.tester===undefined) t.tester='';
+  if(!t.startTime) t.startTime='';
+  if(!t.endTime) t.endTime='';
+  if(!t.logs) t.logs=[];
+  return t;
+}
 
-function loadTickets() {
+async function loadTickets() {
+  const lb = document.getElementById('loading-bar');
+  if (lb) lb.style.display = 'block';
+  // ดึงจาก Google Sheet ก่อน ถ้าไม่ได้ค่อย fallback localStorage
+  if (GAS_URL && GAS_URL !== 'YOUR_APPS_SCRIPT_WEB_APP_URL') {
+    try {
+      const url = GAS_URL + '?action=getAll';
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.status === 'ok' && Array.isArray(data.tickets)) {
+        tickets = data.tickets;
+        saveLocal();
+        if (lb) lb.style.display = 'none';
+        return;
+      }
+    } catch(e) {
+      console.warn('ดึงจาก Sheet ไม่ได้ ใช้ local cache แทน', e);
+    }
+  }
+  // fallback: ใช้ localStorage
   try { tickets = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { tickets = []; }
+  if (lb) lb.style.display = 'none';
 }
 function saveLocal() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets));
+}
+// sync การอัปเดต ticket กลับไป Sheet
+function syncUpdate(ticket) {
+  if (!GAS_URL || GAS_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL') return;
+  const payload = { action:'update', ...ticket };
+  const url = GAS_URL + '?payload=' + encodeURIComponent(JSON.stringify(payload));
+  const img = new Image();
+  img.src = url;
 }
 function genId() {
   return 'TKT-' + String(tickets.length + 1 + Date.now() % 1000).padStart(4,'0').slice(-4);
@@ -425,7 +533,8 @@ function switchTab(tab, el) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('view-' + tab).classList.add('active');
-  if (tab === 'board') renderBoard();
+  if (tab === 'board') { loadTickets().then(() => renderBoard()); }
+  if (tab === 'team') renderTeamList();
 }
 
 function toast(msg, duration = 3000) {
@@ -540,11 +649,22 @@ function renderList() {
   }).join('');
 }
 
+function renderChips(assignees) {
+  return assignees.map(m=>`<span class="member-chip"><span class="avatar-sm">${m.slice(0,2)}</span>${m}<button onclick="removeAssignee('${m}')" aria-label="ลบ">×</button></span>`).join('');
+}
+function renderLogs(logs) {
+  if(!logs||!logs.length) return '<span style="font-size:12px;color:var(--text-secondary)">ยังไม่มี log</span>';
+  return `<div class="tl-wrap">${logs.map((l,i)=>`<div class="tl-item${i===logs.length-1?' tl-latest':''}"><strong>${new Date(l.time).toLocaleString('th-TH',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</strong> — ${l.text}</div>`).join('')}</div>`;
+}
+function toLocalDT(iso){ return iso ? new Date(iso).toISOString().slice(0,16) : ''; }
+
 function openDetail(id) {
-  const t = tickets.find(x => x.id === id);
+  currentEditId = id;
+  const t = initTicket(tickets.find(x => x.id === id));
   if (!t) return;
   const pLabel = t.priority==='high'?'🔴 เร่งด่วน':t.priority==='low'?'🟢 ไม่เร่ง':'🟡 ปานกลาง';
   const dl = t.deadline ? new Date(t.deadline).toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'}) : '-';
+  const memberOpts = TEAM_MEMBERS.map(m=>`<option value="${m}">${m}</option>`).join('');
   document.getElementById('modal-content').innerHTML = `
     <button class="modal-close" onclick="closeModal()" aria-label="ปิด"><i class="ti ti-x" aria-hidden="true"></i></button>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:.75rem">
@@ -558,34 +678,138 @@ function openDetail(id) {
 
     <div class="section-header">รายละเอียด</div>
     <p style="font-size:14px;line-height:1.7;margin-bottom:1rem;white-space:pre-wrap">${t.desc}</p>
-
     <div class="detail-grid" style="margin-bottom:1rem">
       <div><span class="detail-label">ผู้ส่ง:</span> ${t.name}</div>
       <div><span class="detail-label">ทีม:</span> ${t.team}</div>
       <div><span class="detail-label">ความสำคัญ:</span> ${pLabel}</div>
       <div><span class="detail-label">Deadline:</span> ${dl}</div>
     </div>
-
     ${t.outputs?.length?`<div class="section-header">Output ที่ต้องการ</div><div style="margin-bottom:1rem">${t.outputs.map(o=>`<span class="output-tag">${o}</span>`).join('')}</div>`:''}
     ${t.source?`<div class="section-header">แหล่งข้อมูล</div><p style="font-size:13px;margin-bottom:1rem">${t.source}</p>`:''}
 
     <hr class="divider">
-    <div class="section-header">อัปเดตสถานะ</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem">
-      <button class="btn btn-sm" onclick="updateStatus('${t.id}','new')">🆕 ใหม่</button>
-      <button class="btn btn-sm" onclick="updateStatus('${t.id}','inprogress')">⚙️ กำลังทำ</button>
-      <button class="btn btn-sm" onclick="updateStatus('${t.id}','pending')">⏳ รอข้อมูล</button>
-      <button class="btn btn-sm" onclick="updateStatus('${t.id}','done')">✅ เสร็จแล้ว</button>
+    <div class="section-header"><i class="ti ti-activity" aria-hidden="true"></i> สถานะ</div>
+    <div class="status-pills" style="margin-bottom:1.25rem">
+      ${['new','inprogress','pending','done'].map(s=>`<button class="status-pill${t.status===s?' sel':''}" onclick="setStatusInModal('${t.id}','${s}')">${s==='new'?'🆕 ใหม่':s==='inprogress'?'⚙️ กำลังทำ':s==='pending'?'⏳ รอข้อมูล':'✅ เสร็จแล้ว'}</button>`).join('')}
     </div>
 
-    <div class="section-header">Note จากทีม Dashboard</div>
-    <textarea id="note-input" style="width:100%;min-height:72px;margin-bottom:8px;font-size:13px" placeholder="ใส่ note หรือข้อความตอบกลับ...">${t.note||''}</textarea>
-    <button class="btn btn-primary btn-sm" onclick="saveNote('${t.id}')"><i class="ti ti-device-floppy" aria-hidden="true"></i> บันทึก Note</button>
+    <hr class="divider">
+    <div class="section-header"><i class="ti ti-clock" aria-hidden="true"></i> เวลาดำเนินการ</div>
+    <div class="g2" style="margin-bottom:8px">
+      <div>
+        <label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block">เวลาเริ่ม</label>
+        <input type="datetime-local" id="dt-start" value="${toLocalDT(t.startTime)}" style="font-size:13px">
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block">เวลาจบ</label>
+        <input type="datetime-local" id="dt-end" value="${toLocalDT(t.endTime)}" style="font-size:13px">
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:1.25rem">
+      <button class="btn btn-sm" onclick="stampNow('dt-start')"><i class="ti ti-player-play" aria-hidden="true"></i> เริ่มตอนนี้</button>
+      <button class="btn btn-sm" onclick="stampNow('dt-end')"><i class="ti ti-player-stop" aria-hidden="true"></i> จบตอนนี้</button>
+    </div>
+
+    <hr class="divider">
+    <div class="section-header"><i class="ti ti-users" aria-hidden="true"></i> ทีมงาน</div>
+    <div style="margin-bottom:8px">
+      <label style="font-size:12px;color:var(--text-secondary);margin-bottom:4px;display:block">คนทำงาน (เลือกได้หลายคน)</label>
+      <div id="assignee-chips" style="margin-bottom:6px;min-height:28px">${renderChips(t.assignees)}</div>
+      <div style="display:flex;gap:6px">
+        <select id="add-member" style="flex:1;font-size:13px"><option value="">-- เลือกเพิ่ม --</option>${memberOpts}</select>
+        <button class="btn btn-sm" onclick="addAssignee('${t.id}')"><i class="ti ti-plus" aria-hidden="true"></i> เพิ่ม</button>
+      </div>
+    </div>
+    <div class="g2" style="margin-bottom:1.25rem">
+      <div>
+        <label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block"><i class="ti ti-crown" aria-hidden="true"></i> คนดูแล (Supervisor)</label>
+        <select id="sel-supervisor" style="font-size:13px">
+          <option value="">-- ไม่มี --</option>
+          ${TEAM_MEMBERS.map(m=>`<option value="${m}"${t.supervisor===m?' selected':''}>${m}</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block"><i class="ti ti-test-pipe" aria-hidden="true"></i> คนตรวจงาน (Tester)</label>
+        <select id="sel-tester" style="font-size:13px">
+          <option value="">-- ไม่มี --</option>
+          ${TEAM_MEMBERS.map(m=>`<option value="${m}"${t.tester===m?' selected':''}>${m}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="section-header"><i class="ti ti-notes" aria-hidden="true"></i> Note / Log</div>
+    <textarea id="note-input" style="width:100%;min-height:64px;margin-bottom:8px;font-size:13px" placeholder="Note จากทีม...">${t.note||''}</textarea>
+    <div style="display:flex;gap:6px;margin-bottom:1rem">
+      <input type="text" id="log-input" placeholder="เพิ่ม log entry เช่น ส่ง draft แล้ว, แก้สูตร..." style="flex:1;font-size:13px">
+      <button class="btn btn-sm" onclick="addLog('${t.id}')"><i class="ti ti-plus" aria-hidden="true"></i> Log</button>
+    </div>
+    <div id="log-display">${renderLogs(t.logs)}</div>
+
+    <hr class="divider">
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn" onclick="closeModal()">ปิด</button>
+      <button class="btn btn-primary" onclick="saveDetail('${t.id}')"><i class="ti ti-device-floppy" aria-hidden="true"></i> บันทึก</button>
+    </div>
   `;
   document.getElementById('modal-overlay').classList.add('open');
 }
 
-function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); renderBoard(); }
+function stampNow(fieldId) {
+  document.getElementById(fieldId).value = new Date().toISOString().slice(0,16);
+}
+function setStatusInModal(id, status) {
+  const t = initTicket(tickets.find(x => x.id === id));
+  if(t){ t.status=status; saveLocal(); syncUpdate(t); }
+  document.querySelectorAll('.status-pill').forEach(b=>b.classList.remove('sel'));
+  event.target.classList.add('sel');
+  toast('สถานะ → ' + statusLabel[status]);
+}
+function addAssignee(id) {
+  const sel = document.getElementById('add-member');
+  const val = sel.value; if(!val) return;
+  const t = initTicket(tickets.find(x => x.id === id));
+  if(!t.assignees.includes(val)){ t.assignees.push(val); saveLocal(); }
+  document.getElementById('assignee-chips').innerHTML = renderChips(t.assignees);
+  sel.value='';
+  toast('เพิ่ม ' + val);
+}
+function removeAssignee(name) {
+  const t = initTicket(tickets.find(x => x.id === currentEditId));
+  if(t){ t.assignees=t.assignees.filter(m=>m!==name); saveLocal(); }
+  document.getElementById('assignee-chips').innerHTML = renderChips(t?t.assignees:[]);
+  toast('ลบ ' + name + ' ออกแล้ว');
+}
+function addLog(id) {
+  const input = document.getElementById('log-input');
+  const text = input.value.trim(); if(!text) return;
+  const t = initTicket(tickets.find(x => x.id === id));
+  t.logs.push({time: new Date().toISOString(), text});
+  saveLocal(); input.value='';
+  document.getElementById('log-display').innerHTML = renderLogs(t.logs);
+  toast('เพิ่ม log แล้ว');
+}
+function saveDetail(id) {
+  const t = initTicket(tickets.find(x => x.id === id));
+  t.supervisor = document.getElementById('sel-supervisor').value;
+  t.tester = document.getElementById('sel-tester').value;
+  t.note = document.getElementById('note-input').value;
+  const sv = document.getElementById('dt-start').value;
+  const ev = document.getElementById('dt-end').value;
+  t.startTime = sv ? new Date(sv).toISOString() : '';
+  t.endTime   = ev ? new Date(ev).toISOString() : '';
+  saveLocal();
+  syncUpdate(t); // sync กลับ Sheet
+  toast('บันทึกเรียบร้อย');
+  closeModal();
+}
+
+let currentEditId = null;
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  currentEditId = null;
+  renderBoard();
+}
 function handleOverlayClick(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
 
 function updateStatus(id, status) {
@@ -597,7 +821,8 @@ function saveNote(id) {
   if (t) { t.note = document.getElementById('note-input').value; saveLocal(); toast('บันทึก note แล้ว'); }
 }
 
-loadTickets();
+loadMembers();
+loadTickets().then(() => { if(document.getElementById('view-board').classList.contains('active')) renderBoard(); });
 </script>
 </body>
 </html>
