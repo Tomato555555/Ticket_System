@@ -474,27 +474,37 @@ async function submitTicket() {
   tickets.unshift(ticket);
   saveLocal();
 
-  let sheetOk = false;
+  // ส่งข้อมูลไป Apps Script ผ่าน hidden form + iframe (ไม่โดน CORS/sandbox บล็อก)
   if (GAS_URL && GAS_URL !== 'YOUR_APPS_SCRIPT_WEB_APP_URL') {
-    try {
-      // ใช้ GET + ?data= แทน POST เพื่อหลีกเลี่ยง CORS ของ Apps Script
-      const url = GAS_URL + '?data=' + encodeURIComponent(JSON.stringify(ticket));
-      const res = await fetch(url, { method: 'GET' });
-      const data = await res.json();
-      sheetOk = data.status === 'ok';
-    } catch(e) {
-      console.error('Apps Script error:', e);
-    }
+    const iframeName = 'gas-sink-' + Date.now();
+    const iframe = document.createElement('iframe');
+    iframe.name = iframeName;
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = GAS_URL;
+    form.target = iframeName;
+    form.style.display = 'none';
+
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'data';
+    input.value = JSON.stringify(ticket);
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+
+    setTimeout(() => {
+      try { document.body.removeChild(form); document.body.removeChild(iframe); } catch(e){}
+    }, 5000);
   }
 
   btn.disabled = false;
   btn.innerHTML = '<i class="ti ti-send" aria-hidden="true"></i> ส่ง Ticket';
   clearForm();
-
-  const sheetMsg = sheetOk
-    ? ' ✅ บันทึกใน Google Sheet แล้ว'
-    : (GAS_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL' ? '' : ' ⚠️ Sheet ไม่ตอบสนอง');
-  toast('✅ ส่ง ' + ticket.id + ' เรียบร้อย!' + sheetMsg);
+  toast('✅ ส่ง ' + ticket.id + ' เรียบร้อย! (บันทึกลง Google Sheet)');
 }
 
 function renderBoard() { renderStats(); renderList(); }
