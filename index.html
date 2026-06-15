@@ -401,7 +401,7 @@
 // ============================================================
 // CONFIG — แก้ไขค่านี้หลัง deploy Apps Script
 // ============================================================
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec';
+const GAS_URL = 'YOUR_APPS_SCRIPT_WEB_APP_URL';
 // ============================================================
 
 const STORAGE_KEY = 'dash_tickets_v3';
@@ -477,11 +477,9 @@ async function submitTicket() {
   let sheetOk = false;
   if (GAS_URL && GAS_URL !== 'YOUR_APPS_SCRIPT_WEB_APP_URL') {
     try {
-      const res = await fetch(GAS_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(ticket)
-      });
+      // ใช้ GET + ?data= แทน POST เพื่อหลีกเลี่ยง CORS ของ Apps Script
+      const url = GAS_URL + '?data=' + encodeURIComponent(JSON.stringify(ticket));
+      const res = await fetch(url, { method: 'GET' });
       const data = await res.json();
       sheetOk = data.status === 'ok';
     } catch(e) {
