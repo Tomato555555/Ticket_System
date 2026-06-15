@@ -521,8 +521,7 @@ function syncUpdate(ticket) {
   if (!GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec') return;
   const payload = { action:'update', ...ticket };
   const url = GAS_URL + '?payload=' + encodeURIComponent(JSON.stringify(payload));
-  const img = new Image();
-  img.src = url;
+  fetch(url, { mode: 'no-cors' }).catch(() => {});
 }
 function genId() {
   return 'TKT-' + String(tickets.length + 1 + Date.now() % 1000).padStart(4,'0').slice(-4);
@@ -583,11 +582,9 @@ async function submitTicket() {
   tickets.unshift(ticket);
   saveLocal();
 
-  // ส่งผ่าน Image pixel trick — ไม่มี CORS เลย
   if (GAS_URL && GAS_URL !== 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec') {
     const url = GAS_URL + '?payload=' + encodeURIComponent(JSON.stringify(ticket));
-    const img = new Image();
-    img.src = url;
+    fetch(url, { mode: 'no-cors' }).catch(() => {});
   }
 
   btn.disabled = false;
