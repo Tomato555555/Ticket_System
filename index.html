@@ -522,14 +522,15 @@ function syncUpdate(ticket) {
   sendToSheet({ action:'update', ...ticket });
 }
 function sendToSheet(data) {
-  // ส่งผ่าน FormData POST — ไม่มี URL length limit, ไม่โดน CORS block
-  const form = new FormData();
-  form.append('payload', JSON.stringify(data));
-  fetch(GAS_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    body: form
-  }).catch(() => {});
+  if (data.action === 'delete') {
+    const url = GAS_URL + '?action=delete&id=' + encodeURIComponent(data.id);
+    fetch(url, { mode:'no-cors' }).catch(() => {});
+    return;
+  }
+  const slim = { ...data };
+  if (slim.logs && slim.logs.length > 10) slim.logs = slim.logs.slice(-10);
+  const url = GAS_URL + '?payload=' + encodeURIComponent(JSON.stringify(slim));
+  fetch(url, { mode:'no-cors' }).catch(() => {});
 }
 function genId() {
   return 'TKT-' + String(tickets.length + 1 + Date.now() % 1000).padStart(4,'0').slice(-4);
