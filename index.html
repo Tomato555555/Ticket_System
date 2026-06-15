@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Team — Ticket System</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f7f7f5;
+      --bg-tertiary: #f0efe9;
+      --text: #1a1a18;
+      --text-secondary: #6b6b67;
+      --border: rgba(0,0,0,0.12);
+      --border-md: rgba(0,0,0,0.22);
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --blue-bg: #E6F1FB; --blue-text: #0C447C;
+      --amber-bg: #FAEEDA; --amber-text: #633806;
+      --green-bg: #EAF3DE; --green-text: #27500A;
+      --purple-bg: #EEEDFE; --purple-text: #3C3489;
+      --coral-bg: #FAECE7; --coral-text: #4A1B0C;
+      --teal-bg: #E1F5EE; --teal-text: #04342C;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1c1c1a; --bg-secondary: #252523; --bg-tertiary: #2e2e2b;
+        --text: #f0efe9; --text-secondary: #9a9a94;
+        --border: rgba(255,255,255,0.1); --border-md: rgba(255,255,255,0.2);
+        --blue-bg: #0C447C; --blue-text: #B5D4F4;
+        --amber-bg: #633806; --amber-text: #FAC775;
+        --green-bg: #27500A; --green-text: #C0DD97;
+        --purple-bg: #3C3489; --purple-text: #CECBF6;
+        --coral-bg: #4A1B0C; --coral-text: #F5C4B3;
+        --teal-bg: #085041; --teal-text: #9FE1CB;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-tertiary);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .nav {
+      background: var(--bg);
+      border-bottom: 0.5px solid var(--border);
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .nav-brand {
+      font-size: 15px;
+      font-weight: 500;
+      padding: 1rem 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .nav-brand i { color: var(--blue-text); font-size: 20px; }
+    .nav-tabs { display: flex; gap: 0; }
+    .nav-tab {
+      padding: 1rem 1rem;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--text-secondary);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      font-family: inherit;
+      transition: color .15s;
+    }
+    .nav-tab.active { color: var(--text); border-bottom-color: var(--text); font-weight: 500; }
+    .nav-tab:hover:not(.active) { color: var(--text); }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem; }
+
+    .card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .section-header {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--text-secondary);
+      margin-bottom: .75rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .section-header i { font-size: 14px; }
+    .divider { border: none; border-top: 0.5px solid var(--border); margin: 1.25rem 0; }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-group:last-child { margin-bottom: 0; }
+    label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
+    label .check { color: #E24B4A; margin-left: 2px; }
+    input, select, textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 0.5px solid var(--border-md);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text);
+      transition: border-color .15s, box-shadow .15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--blue-text);
+      box-shadow: 0 0 0 3px rgba(24,95,165,0.12);
+    }
+    textarea { resize: vertical; min-height: 90px; }
+    select[multiple] { min-height: 96px; }
+    .hint { font-size: 11px; color: var(--text-secondary); margin-top: 3px; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: 160px 1fr; gap: 12px; }
+
+    .btn {
+      padding: 9px 18px;
+      border: 0.5px solid var(--border-md);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      cursor: pointer;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text);
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background .15s;
+    }
+    .btn:hover { background: var(--bg-secondary); }
+    .btn-primary { background: var(--text); color: var(--bg); border-color: transparent; }
+    .btn-primary:hover { opacity: .85; }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-sm { padding: 5px 12px; font-size: 13px; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.5rem; }
+    .stat-card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: .85rem 1rem;
+      text-align: center;
+    }
+    .stat-num { font-size: 26px; font-weight: 500; }
+    .stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+    .filters { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+    .filter-btn {
+      padding: 5px 14px;
+      border: 0.5px solid var(--border-md);
+      border-radius: 999px;
+      font-size: 13px;
+      cursor: pointer;
+      background: var(--bg);
+      color: var(--text-secondary);
+      font-family: inherit;
+      transition: all .15s;
+    }
+    .filter-btn.active { background: var(--text); color: var(--bg); border-color: transparent; }
+
+    .ticket-card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .ticket-card:hover { border-color: var(--border-md); box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+    .ticket-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+    .ticket-id { font-size: 12px; color: var(--text-secondary); font-weight: 500; font-family: monospace; }
+    .ticket-title { font-size: 15px; font-weight: 500; flex: 1; min-width: 120px; }
+    .ticket-meta { font-size: 12px; color: var(--text-secondary); display: flex; gap: 14px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
+
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+    .badge-new { background: var(--blue-bg); color: var(--blue-text); }
+    .badge-inprogress { background: var(--amber-bg); color: var(--amber-text); }
+    .badge-done { background: var(--green-bg); color: var(--green-text); }
+    .badge-pending { background: var(--purple-bg); color: var(--purple-text); }
+
+    .tag { display: inline-block; padding: 2px 8px; border-radius: var(--radius-md); font-size: 12px; font-weight: 500; }
+    .tag-bug { background: var(--coral-bg); color: var(--coral-text); }
+    .tag-check { background: var(--purple-bg); color: var(--purple-text); }
+    .tag-new { background: var(--green-bg); color: var(--green-text); }
+    .tag-data { background: var(--teal-bg); color: var(--teal-text); }
+    .tag-jobcode { background: var(--purple-bg); color: var(--purple-text); font-family: monospace; }
+    .output-tag {
+      display: inline-block; padding: 2px 8px;
+      background: var(--bg-secondary); border: 0.5px solid var(--border);
+      border-radius: var(--radius-md); font-size: 12px; margin: 2px;
+    }
+
+    .empty { text-align: center; padding: 4rem 1rem; color: var(--text-secondary); }
+    .empty i { font-size: 40px; display: block; margin-bottom: .75rem; opacity: .4; }
+
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.4); z-index: 200;
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg); border-radius: var(--radius-lg);
+      padding: 1.75rem; max-width: 580px; width: 100%;
+      max-height: 88vh; overflow-y: auto; position: relative;
+    }
+    .modal-close {
+      position: absolute; top: 14px; right: 14px;
+      border: none; background: none; cursor: pointer;
+      color: var(--text-secondary); font-size: 22px; line-height: 1;
+    }
+    .modal-close:hover { color: var(--text); }
+
+    .toast {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      background: var(--text); color: var(--bg);
+      padding: 10px 20px; border-radius: var(--radius-md);
+      font-size: 14px; opacity: 0; transition: opacity .3s;
+      pointer-events: none; z-index: 999; max-width: 320px;
+    }
+    .toast.show { opacity: 1; }
+
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; }
+    .detail-label { color: var(--text-secondary); }
+
+    @media (max-width: 600px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .nav-brand span { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <i class="ti ti-chart-dots-3" aria-hidden="true"></i>
+    <span>Dashboard Team · Ticket</span>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('submit', this)">
+      <i class="ti ti-plus" aria-hidden="true"></i> ส่ง Ticket
+    </button>
+    <button class="nav-tab" onclick="switchTab('board', this)">
+      <i class="ti ti-layout-kanban" aria-hidden="true"></i> ดู Ticket ทั้งหมด
+    </button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- SUBMIT VIEW -->
+  <div id="view-submit" class="view active">
+
+    <div class="card">
+      <div class="section-header"><i class="ti ti-briefcase" aria-hidden="true"></i> ข้อมูลงาน</div>
+      <div class="grid-3">
+        <div class="form-group">
+          <label>รหัสงาน (Job Code)<span class="check">*</span></label>
+          <input type="text" id="f-jobcode" placeholder="JOB-2024-001">
+        </div>
+        <div class="form-group">
+          <label>ชื่องาน (Job Name)<span class="check">*</span></label>
+          <input type="text" id="f-jobname" placeholder="เช่น รายงานยอดขายรายสัปดาห์ Marketing Q3">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-header"><i class="ti ti-user" aria-hidden="true"></i> ข้อมูลผู้ส่ง</div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>ชื่อ-นามสกุล<span class="check">*</span></label>
+          <input type="text" id="f-name" placeholder="เช่น สมชาย ใจดี">
+        </div>
+        <div class="form-group">
+          <label>ทีม / แผนก<span class="check">*</span></label>
+          <input type="text" id="f-team" placeholder="เช่น Sales, Marketing, Finance">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-header"><i class="ti ti-ticket" aria-hidden="true"></i> รายละเอียด Ticket</div>
+      <div class="form-group">
+        <label>หัวข้อ Ticket<span class="check">*</span></label>
+        <input type="text" id="f-title" placeholder="สรุปปัญหา หรือ requirement ให้กระชับ">
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>ประเภท<span class="check">*</span></label>
+          <select id="f-type">
+            <option value="">-- เลือกประเภท --</option>
+            <option value="bug">🐛 แจ้งปัญหา / Bug</option>
+            <option value="check">📋 ขอเช็คข้อมูล / โลจิก</option>
+            <option value="new">✨ งานใหม่ / New Feature</option>
+            <option value="data">🗄️ ขอข้อมูล</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ความสำคัญ</label>
+          <select id="f-priority">
+            <option value="medium">🟡 ปานกลาง</option>
+            <option value="high">🔴 เร่งด่วน</option>
+            <option value="low">🟢 ไม่เร่ง</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>รายละเอียด<span class="check">*</span></label>
+        <textarea id="f-desc" placeholder="อธิบายปัญหา หรือ requirement ให้ชัดเจน — ต้องการข้อมูลอะไร, ใช้ที่ไหน, ผลลัพธ์แบบไหน"></textarea>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Output ที่ต้องการ</label>
+          <select id="f-output" multiple>
+            <option value="API">API</option>
+            <option value="Google Sheet">Google Sheet</option>
+            <option value="Power BI">Power BI</option>
+            <option value="Tableau">Tableau</option>
+            <option value="Dashboard อื่นๆ">Dashboard อื่นๆ</option>
+            <option value="Report PDF">Report PDF</option>
+          </select>
+          <div class="hint">Ctrl/Cmd + คลิก เพื่อเลือกหลายรายการ</div>
+        </div>
+        <div class="form-group">
+          <label>แหล่งข้อมูลที่เกี่ยวข้อง</label>
+          <textarea id="f-source" style="min-height:96px" placeholder="เช่น Google Ads, Shopify, MySQL orders, LINE OA..."></textarea>
+        </div>
+      </div>
+      <div class="form-group" style="max-width:220px">
+        <label>Deadline ที่ต้องการ</label>
+        <input type="date" id="f-deadline">
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn" onclick="clearForm()"><i class="ti ti-trash" aria-hidden="true"></i> ล้างฟอร์ม</button>
+      <button class="btn btn-primary" id="submit-btn" onclick="submitTicket()">
+        <i class="ti ti-send" aria-hidden="true"></i> ส่ง Ticket
+      </button>
+    </div>
+  </div>
+
+  <!-- BOARD VIEW -->
+  <div id="view-board" class="view">
+    <div class="stats-grid" id="stats-grid"></div>
+    <div class="filters">
+      <button class="filter-btn active" onclick="setFilter('all',this)">ทั้งหมด</button>
+      <button class="filter-btn" onclick="setFilter('new',this)">🆕 ใหม่</button>
+      <button class="filter-btn" onclick="setFilter('inprogress',this)">⚙️ กำลังทำ</button>
+      <button class="filter-btn" onclick="setFilter('pending',this)">⏳ รอข้อมูล</button>
+      <button class="filter-btn" onclick="setFilter('done',this)">✅ เสร็จแล้ว</button>
+    </div>
+    <div id="ticket-list"></div>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// CONFIG — แก้ไขค่านี้หลัง deploy Apps Script
+// ============================================================
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec';
+// ============================================================
+
+const STORAGE_KEY = 'dash_tickets_v3';
+let tickets = [];
+let currentFilter = 'all';
+const typeLabel = { bug:'แจ้งปัญหา', check:'ขอเช็คข้อมูล/โลจิก', new:'งานใหม่', data:'ขอข้อมูล' };
+const statusLabel = { new:'ใหม่', inprogress:'กำลังทำ', done:'เสร็จแล้ว', pending:'รอข้อมูล' };
+
+function loadTickets() {
+  try { tickets = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { tickets = []; }
+}
+function saveLocal() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets));
+}
+function genId() {
+  return 'TKT-' + String(tickets.length + 1 + Date.now() % 1000).padStart(4,'0').slice(-4);
+}
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('view-' + tab).classList.add('active');
+  if (tab === 'board') renderBoard();
+}
+
+function toast(msg, duration = 3000) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), duration);
+}
+
+function clearForm() {
+  ['f-jobcode','f-jobname','f-name','f-team','f-title','f-type','f-priority','f-desc','f-source','f-deadline'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = el.tagName === 'SELECT' && !el.multiple ? el.options[0]?.value || '' : '';
+  });
+  Array.from(document.getElementById('f-output').options).forEach(o => o.selected = false);
+}
+
+async function submitTicket() {
+  const v = id => document.getElementById(id).value.trim();
+  const jobcode = v('f-jobcode'), jobname = v('f-jobname');
+  const name = v('f-name'), team = v('f-team');
+  const title = v('f-title'), type = v('f-type'), desc = v('f-desc');
+
+  if (!jobcode || !jobname || !name || !team || !title || !type || !desc) {
+    toast('⚠️ กรุณากรอกข้อมูลที่มี * ให้ครบ');
+    return;
+  }
+
+  const outputs = Array.from(document.getElementById('f-output').selectedOptions).map(o => o.value);
+  const ticket = {
+    id: genId(),
+    jobcode, jobname, name, team, title, type,
+    priority: v('f-priority') || 'medium',
+    desc, outputs,
+    source: v('f-source'),
+    deadline: v('f-deadline'),
+    status: 'new',
+    created: new Date().toISOString(),
+    note: ''
+  };
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> กำลังส่ง...';
+
+  tickets.unshift(ticket);
+  saveLocal();
+
+  let sheetOk = false;
+  if (GAS_URL && GAS_URL !== 'YOUR_APPS_SCRIPT_WEB_APP_URL') {
+    try {
+      const res = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(ticket)
+      });
+      const data = await res.json();
+      sheetOk = data.status === 'ok';
+    } catch(e) {
+      console.error('Apps Script error:', e);
+    }
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="ti ti-send" aria-hidden="true"></i> ส่ง Ticket';
+  clearForm();
+
+  const sheetMsg = sheetOk
+    ? ' ✅ บันทึกใน Google Sheet แล้ว'
+    : (GAS_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL' ? '' : ' ⚠️ Sheet ไม่ตอบสนอง');
+  toast('✅ ส่ง ' + ticket.id + ' เรียบร้อย!' + sheetMsg);
+}
+
+function renderBoard() { renderStats(); renderList(); }
+
+function renderStats() {
+  const c = { total: tickets.length, new: 0, inprogress: 0, done: 0 };
+  tickets.forEach(t => { if (c[t.status] !== undefined) c[t.status]++; });
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${c.total}</div><div class="stat-label">ทั้งหมด</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--blue-text)">${c.new}</div><div class="stat-label">ใหม่</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#854F0B">${c.inprogress}</div><div class="stat-label">กำลังทำ</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--green-text)">${c.done}</div><div class="stat-label">เสร็จแล้ว</div></div>
+  `;
+}
+
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderList();
+}
+
+function renderList() {
+  const list = document.getElementById('ticket-list');
+  const filtered = currentFilter === 'all' ? tickets : tickets.filter(t => t.status === currentFilter);
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty"><i class="ti ti-inbox" aria-hidden="true"></i>ยังไม่มี ticket</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(t => {
+    const d = t.deadline ? new Date(t.deadline).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'}) : '-';
+    const c = new Date(t.created).toLocaleDateString('th-TH',{day:'numeric',month:'short'});
+    const pLabel = t.priority==='high'?'🔴 เร่งด่วน':t.priority==='low'?'🟢 ไม่เร่ง':'🟡 ปานกลาง';
+    return `<div class="ticket-card" onclick="openDetail('${t.id}')">
+      <div class="ticket-header">
+        <span class="ticket-id">${t.id}</span>
+        ${t.jobcode?`<span class="tag tag-jobcode">${t.jobcode}</span>`:''}
+        <span class="ticket-title">${t.title}</span>
+        <span class="badge badge-${t.status}">${statusLabel[t.status]||t.status}</span>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:4px">
+        ${t.jobname?`<span style="font-size:12px;color:var(--text-secondary)">${t.jobname}</span>`:''}
+        <span class="tag tag-${t.type}">${typeLabel[t.type]||t.type}</span>
+        <span class="output-tag">${t.team}</span>
+      </div>
+      <div class="ticket-meta">
+        <span><i class="ti ti-user" aria-hidden="true"></i> ${t.name}</span>
+        <span>${pLabel}</span>
+        <span><i class="ti ti-calendar" aria-hidden="true"></i> ${d}</span>
+        <span style="margin-left:auto">${c}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openDetail(id) {
+  const t = tickets.find(x => x.id === id);
+  if (!t) return;
+  const pLabel = t.priority==='high'?'🔴 เร่งด่วน':t.priority==='low'?'🟢 ไม่เร่ง':'🟡 ปานกลาง';
+  const dl = t.deadline ? new Date(t.deadline).toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'}) : '-';
+  document.getElementById('modal-content').innerHTML = `
+    <button class="modal-close" onclick="closeModal()" aria-label="ปิด"><i class="ti ti-x" aria-hidden="true"></i></button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:.75rem">
+      <span class="ticket-id" style="font-size:13px">${t.id}</span>
+      ${t.jobcode?`<span class="tag tag-jobcode">${t.jobcode}</span>`:''}
+      <span class="badge badge-${t.status}">${statusLabel[t.status]||t.status}</span>
+      <span class="tag tag-${t.type}">${typeLabel[t.type]||t.type}</span>
+    </div>
+    ${t.jobname?`<div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px"><i class="ti ti-briefcase" aria-hidden="true"></i> ${t.jobname}</div>`:''}
+    <div style="font-size:17px;font-weight:500;margin-bottom:1.25rem">${t.title}</div>
+
+    <div class="section-header">รายละเอียด</div>
+    <p style="font-size:14px;line-height:1.7;margin-bottom:1rem;white-space:pre-wrap">${t.desc}</p>
+
+    <div class="detail-grid" style="margin-bottom:1rem">
+      <div><span class="detail-label">ผู้ส่ง:</span> ${t.name}</div>
+      <div><span class="detail-label">ทีม:</span> ${t.team}</div>
+      <div><span class="detail-label">ความสำคัญ:</span> ${pLabel}</div>
+      <div><span class="detail-label">Deadline:</span> ${dl}</div>
+    </div>
+
+    ${t.outputs?.length?`<div class="section-header">Output ที่ต้องการ</div><div style="margin-bottom:1rem">${t.outputs.map(o=>`<span class="output-tag">${o}</span>`).join('')}</div>`:''}
+    ${t.source?`<div class="section-header">แหล่งข้อมูล</div><p style="font-size:13px;margin-bottom:1rem">${t.source}</p>`:''}
+
+    <hr class="divider">
+    <div class="section-header">อัปเดตสถานะ</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem">
+      <button class="btn btn-sm" onclick="updateStatus('${t.id}','new')">🆕 ใหม่</button>
+      <button class="btn btn-sm" onclick="updateStatus('${t.id}','inprogress')">⚙️ กำลังทำ</button>
+      <button class="btn btn-sm" onclick="updateStatus('${t.id}','pending')">⏳ รอข้อมูล</button>
+      <button class="btn btn-sm" onclick="updateStatus('${t.id}','done')">✅ เสร็จแล้ว</button>
+    </div>
+
+    <div class="section-header">Note จากทีม Dashboard</div>
+    <textarea id="note-input" style="width:100%;min-height:72px;margin-bottom:8px;font-size:13px" placeholder="ใส่ note หรือข้อความตอบกลับ...">${t.note||''}</textarea>
+    <button class="btn btn-primary btn-sm" onclick="saveNote('${t.id}')"><i class="ti ti-device-floppy" aria-hidden="true"></i> บันทึก Note</button>
+  `;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); renderBoard(); }
+function handleOverlayClick(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+
+function updateStatus(id, status) {
+  const t = tickets.find(x => x.id === id);
+  if (t) { t.status = status; saveLocal(); toast('อัปเดตสถานะ → ' + statusLabel[status]); openDetail(id); }
+}
+function saveNote(id) {
+  const t = tickets.find(x => x.id === id);
+  if (t) { t.note = document.getElementById('note-input').value; saveLocal(); toast('บันทึก note แล้ว'); }
+}
+
+loadTickets();
+</script>
+</body>
+</html>
