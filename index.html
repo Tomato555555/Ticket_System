@@ -474,31 +474,11 @@ async function submitTicket() {
   tickets.unshift(ticket);
   saveLocal();
 
-  // ส่งข้อมูลไป Apps Script ผ่าน hidden form + iframe (ไม่โดน CORS/sandbox บล็อก)
+  // ส่งผ่าน Image pixel trick — ไม่มี CORS เลย
   if (GAS_URL && GAS_URL !== 'YOUR_APPS_SCRIPT_WEB_APP_URL') {
-    const iframeName = 'gas-sink-' + Date.now();
-    const iframe = document.createElement('iframe');
-    iframe.name = iframeName;
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = GAS_URL;
-    form.target = iframeName;
-    form.style.display = 'none';
-
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'data';
-    input.value = JSON.stringify(ticket);
-    form.appendChild(input);
-    document.body.appendChild(form);
-    form.submit();
-
-    setTimeout(() => {
-      try { document.body.removeChild(form); document.body.removeChild(iframe); } catch(e){}
-    }, 5000);
+    const url = GAS_URL + '?payload=' + encodeURIComponent(JSON.stringify(ticket));
+    const img = new Image();
+    img.src = url;
   }
 
   btn.disabled = false;
