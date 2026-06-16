@@ -278,7 +278,7 @@ function initTicket(t) {
 }
 
 // ===== GAS =====
-function hasGAS() { return GAS_URL && GAS_URL !== 'YOUR_APPS_SCRIPT_WEB_APP_URL'; }
+function hasGAS() { return GAS_URL && GAS_URL !== 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec'; }
 function sendToSheet(data) {
   if (!hasGAS()) return;
   if (data.action === 'delete') {
@@ -296,14 +296,20 @@ function sendToSheet(data) {
     fetch(GAS_URL + '?' + p.toString(), { mode:'no-cors' }).catch(() => {});
     return;
   }
-  // add
+  // editFull หรือ add — ส่ง field หลักทั้งหมด
   const p = new URLSearchParams({
-    action:'add', id:data.id||'', jobcode:data.jobcode||'',
+    action: data.action === 'editFull' ? 'editFull' : 'add',
+    id:data.id||'', jobcode:data.jobcode||'',
     jobname:data.jobname||'', name:data.name||'', team:data.team||'',
     title:data.title||'', type:data.type||'', priority:data.priority||'',
     outputs:(data.outputs||[]).join(', '), source:(data.source||'').slice(0,200),
     deadline:data.deadline||'', created:data.created||'',
     desc:(data.desc||'').slice(0,400),
+    status:data.status||'',
+    assignees:(data.assignees||[]).join(', '),
+    supervisor:data.supervisor||'', tester:data.tester||'',
+    startTime:data.startTime||'', endTime:data.endTime||'',
+    note:(data.note||'').slice(0,300),
   });
   fetch(GAS_URL + '?' + p.toString(), { mode:'no-cors' }).catch(() => {});
 }
@@ -421,18 +427,44 @@ function openDetail(id) {
       <span class="badge badge-${t.status}">${statusLabel[t.status]||t.status}</span>
       <span class="tag tag-${t.type}">${typeLabel[t.type]||t.type}</span>
     </div>
-    ${t.jobname?`<div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px"><i class="ti ti-briefcase" aria-hidden="true"></i> ${t.jobname}</div>`:''}
-    <div style="font-size:17px;font-weight:500;margin-bottom:1.25rem">${t.title}</div>
-    <div class="section-header">รายละเอียด</div>
-    <p style="font-size:14px;line-height:1.7;margin-bottom:1rem;white-space:pre-wrap">${t.desc}</p>
-    <div class="detail-grid" style="margin-bottom:1rem">
-      <div><span class="detail-label">ผู้ส่ง:</span> ${t.name}</div>
-      <div><span class="detail-label">ทีม:</span> ${t.team}</div>
-      <div><span class="detail-label">ความสำคัญ:</span> ${pLabel}</div>
-      <div><span class="detail-label">Deadline:</span> ${dl}</div>
+    <div class="section-header"><i class="ti ti-edit" aria-hidden="true"></i> ข้อมูลงาน</div>
+    <div class="g2" style="margin-bottom:.75rem">
+      <div><label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block">รหัสงาน (Job Code)</label>
+        <input type="text" id="e-jobcode" value="${t.jobcode||''}" style="font-size:13px"></div>
+      <div><label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block">ชื่องาน (Job Name)</label>
+        <input type="text" id="e-jobname" value="${t.jobname||''}" style="font-size:13px"></div>
     </div>
-    ${t.outputs?.length?`<div class="section-header">Output</div><div style="margin-bottom:1rem">${t.outputs.map(o=>`<span class="output-tag">${o}</span>`).join('')}</div>`:''}
-    ${t.source?`<div class="section-header">แหล่งข้อมูล</div><p style="font-size:13px;margin-bottom:1rem">${t.source}</p>`:''}
+    <div style="margin-bottom:.75rem"><label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block">หัวข้อ Ticket</label>
+      <input type="text" id="e-title" value="${t.title||''}" style="font-size:13px;width:100%"></div>
+    <div class="g2" style="margin-bottom:.75rem">
+      <div><label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block">ประเภท</label>
+        <select id="e-type" style="font-size:13px">
+          <option value="bug"${t.type==='bug'?' selected':''}>🐛 แจ้งปัญหา/Bug</option>
+          <option value="check"${t.type==='check'?' selected':''}>📋 เช็คข้อมูล/โลจิก</option>
+          <option value="new"${t.type==='new'?' selected':''}>✨ งานใหม่</option>
+          <option value="data"${t.type==='data'?' selected':''}>🗄️ ขอข้อมูล</option>
+        </select></div>
+      <div><label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block">ความสำคัญ</label>
+        <select id="e-priority" style="font-size:13px">
+          <option value="high"${t.priority==='high'?' selected':''}>🔴 เร่งด่วน</option>
+          <option value="medium"${t.priority==='medium'?' selected':''}>🟡 ปานกลาง</option>
+          <option value="low"${t.priority==='low'?' selected':''}>🟢 ไม่เร่ง</option>
+        </select></div>
+    </div>
+    <div style="margin-bottom:.75rem"><label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block">รายละเอียด</label>
+      <textarea id="e-desc" style="font-size:13px;width:100%;min-height:80px">${t.desc||''}</textarea></div>
+    <div class="g2" style="margin-bottom:.75rem">
+      <div><label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block">ผู้ส่ง</label>
+        <input type="text" id="e-name" value="${t.name||''}" style="font-size:13px"></div>
+      <div><label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block">ทีม/แผนก</label>
+        <input type="text" id="e-team" value="${t.team||''}" style="font-size:13px"></div>
+    </div>
+    <div class="g2" style="margin-bottom:.75rem">
+      <div><label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block">Deadline</label>
+        <input type="date" id="e-deadline" value="${t.deadline||''}" style="font-size:13px"></div>
+      <div><label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block">แหล่งข้อมูล</label>
+        <input type="text" id="e-source" value="${t.source||''}" style="font-size:13px"></div>
+    </div>
     <hr class="divider">
     <div class="section-header"><i class="ti ti-activity" aria-hidden="true"></i> สถานะ</div>
     <div class="status-pills" style="margin-bottom:1.25rem">
@@ -511,14 +543,29 @@ function addLog(id) {
 }
 function saveDetail(id) {
   const t = initTicket(tickets.find(x => x.id === id));
+  // ข้อมูลหลัก (editable)
+  t.jobcode  = document.getElementById('e-jobcode').value.trim();
+  t.jobname  = document.getElementById('e-jobname').value.trim();
+  t.title    = document.getElementById('e-title').value.trim();
+  t.type     = document.getElementById('e-type').value;
+  t.priority = document.getElementById('e-priority').value;
+  t.desc     = document.getElementById('e-desc').value.trim();
+  t.name     = document.getElementById('e-name').value.trim();
+  t.team     = document.getElementById('e-team').value.trim();
+  t.deadline = document.getElementById('e-deadline').value;
+  t.source   = document.getElementById('e-source').value.trim();
+  // ข้อมูลทีม
   t.supervisor = document.getElementById('sel-supervisor').value;
-  t.tester = document.getElementById('sel-tester').value;
-  t.note = document.getElementById('note-input').value;
+  t.tester     = document.getElementById('sel-tester').value;
+  t.note       = document.getElementById('note-input').value;
   const sv = document.getElementById('dt-start').value;
   const ev = document.getElementById('dt-end').value;
   t.startTime = sv ? new Date(sv).toISOString() : '';
   t.endTime   = ev ? new Date(ev).toISOString() : '';
-  saveLocal(); syncUpdate(t); toast('บันทึกเรียบร้อย'); closeModal();
+  saveLocal();
+  // sync ทั้งหมดไป Sheet
+  sendToSheet({ action:'editFull', ...t });
+  toast('บันทึกเรียบร้อย'); closeModal();
 }
 function deleteTicket(id) {
   if (!confirm('ลบ Ticket นี้? ข้อมูลจะถูกลบออกจาก Google Sheet ด้วย')) return;
