@@ -523,10 +523,30 @@ function syncUpdate(ticket) {
 }
 function sendToSheet(data) {
   if (data.action === 'delete') {
-    const url = GAS_URL + '?action=delete&id=' + encodeURIComponent(data.id);
-    fetch(url, { mode:'no-cors' }).catch(() => {});
+    fetch(GAS_URL + '?action=delete&id=' + encodeURIComponent(data.id), { mode:'no-cors' }).catch(() => {});
     return;
   }
+  if (data.action === 'update') {
+    const p = new URLSearchParams({
+      action:'update', id:data.id||'', status:data.status||'',
+      assignees:(data.assignees||[]).join(', '),
+      supervisor:data.supervisor||'', tester:data.tester||'',
+      startTime:data.startTime||'', endTime:data.endTime||'',
+      note:(data.note||'').slice(0,300),
+    });
+    fetch(GAS_URL + '?' + p.toString(), { mode:'no-cors' }).catch(() => {});
+    return;
+  }
+  const p = new URLSearchParams({
+    action:'add', id:data.id||'', jobcode:data.jobcode||'',
+    jobname:data.jobname||'', name:data.name||'', team:data.team||'',
+    title:data.title||'', type:data.type||'', priority:data.priority||'',
+    outputs:(data.outputs||[]).join(', '), source:(data.source||'').slice(0,200),
+    deadline:data.deadline||'', created:data.created||'',
+    desc:(data.desc||'').slice(0,400),
+  });
+  fetch(GAS_URL + '?' + p.toString(), { mode:'no-cors' }).catch(() => {});
+}
   const slim = { ...data };
   if (slim.logs && slim.logs.length > 10) slim.logs = slim.logs.slice(-10);
   const url = GAS_URL + '?payload=' + encodeURIComponent(JSON.stringify(slim));
