@@ -278,7 +278,7 @@ function initTicket(t) {
 }
 
 // ===== GAS =====
-function hasGAS() { return GAS_URL && GAS_URL !== 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec'; }
+function hasGAS() { return GAS_URL && GAS_URL !== 'YOUR_APPS_SCRIPT_WEB_APP_URL'; }
 function sendToSheet(data) {
   if (!hasGAS()) return;
   if (data.action === 'delete') {
