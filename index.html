@@ -7,17 +7,11 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #ffffff;
-      --bg-secondary: #f7f7f5;
-      --bg-tertiary: #f0efe9;
-      --text: #1a1a18;
-      --text-secondary: #6b6b67;
-      --border: rgba(0,0,0,0.12);
-      --border-md: rgba(0,0,0,0.22);
-      --radius-md: 8px;
-      --radius-lg: 12px;
+      --bg: #ffffff; --bg-secondary: #f7f7f5; --bg-tertiary: #f0efe9;
+      --text: #1a1a18; --text-secondary: #6b6b67;
+      --border: rgba(0,0,0,0.12); --border-md: rgba(0,0,0,0.22);
+      --radius-md: 8px; --radius-lg: 12px;
       --blue-bg: #E6F1FB; --blue-text: #0C447C;
       --amber-bg: #FAEEDA; --amber-text: #633806;
       --green-bg: #EAF3DE; --green-text: #27500A;
@@ -25,7 +19,6 @@
       --coral-bg: #FAECE7; --coral-text: #4A1B0C;
       --teal-bg: #E1F5EE; --teal-text: #04342C;
     }
-
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #1c1c1a; --bg-secondary: #252523; --bg-tertiary: #2e2e2b;
@@ -39,219 +32,74 @@
         --teal-bg: #085041; --teal-text: #9FE1CB;
       }
     }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg-tertiary);
-      color: var(--text);
-      font-size: 15px;
-      line-height: 1.6;
-      min-height: 100vh;
-    }
-
-    .nav {
-      background: var(--bg);
-      border-bottom: 0.5px solid var(--border);
-      padding: 0 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
-    .nav-brand {
-      font-size: 15px;
-      font-weight: 500;
-      padding: 1rem 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--text);
-      white-space: nowrap;
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg-tertiary); color: var(--text); font-size: 15px; line-height: 1.6; min-height: 100vh; }
+    .nav { background: var(--bg); border-bottom: 0.5px solid var(--border); padding: 0 1.5rem; display: flex; align-items: center; gap: 1.5rem; position: sticky; top: 0; z-index: 50; }
+    .nav-brand { font-size: 15px; font-weight: 500; padding: 1rem 0; display: flex; align-items: center; gap: 8px; color: var(--text); white-space: nowrap; }
     .nav-brand i { color: var(--blue-text); font-size: 20px; }
     .nav-tabs { display: flex; gap: 0; }
-    .nav-tab {
-      padding: 1rem 1rem;
-      font-size: 14px;
-      cursor: pointer;
-      border: none;
-      background: none;
-      color: var(--text-secondary);
-      border-bottom: 2px solid transparent;
-      margin-bottom: -1px;
-      font-family: inherit;
-      transition: color .15s;
-    }
+    .nav-tab { padding: 1rem 1rem; font-size: 14px; cursor: pointer; border: none; background: none; color: var(--text-secondary); border-bottom: 2px solid transparent; margin-bottom: -1px; font-family: inherit; transition: color .15s; }
     .nav-tab.active { color: var(--text); border-bottom-color: var(--text); font-weight: 500; }
     .nav-tab:hover:not(.active) { color: var(--text); }
-
     .container { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem; }
-
-    .card {
-      background: var(--bg);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 1.5rem;
-      margin-bottom: 1rem;
-    }
-    .section-header {
-      font-size: 11px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: .04em;
-      color: var(--text-secondary);
-      margin-bottom: .75rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1rem; }
+    .section-header { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; color: var(--text-secondary); margin-bottom: .75rem; display: flex; align-items: center; gap: 6px; }
     .section-header i { font-size: 14px; }
     .divider { border: none; border-top: 0.5px solid var(--border); margin: 1.25rem 0; }
-
     .form-group { margin-bottom: 1rem; }
     .form-group:last-child { margin-bottom: 0; }
     label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
     label .check { color: #E24B4A; margin-left: 2px; }
-    input, select, textarea {
-      width: 100%;
-      padding: 9px 12px;
-      border: 0.5px solid var(--border-md);
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      font-family: inherit;
-      background: var(--bg);
-      color: var(--text);
-      transition: border-color .15s, box-shadow .15s;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--blue-text);
-      box-shadow: 0 0 0 3px rgba(24,95,165,0.12);
-    }
+    input, select, textarea { width: 100%; padding: 9px 12px; border: 0.5px solid var(--border-md); border-radius: var(--radius-md); font-size: 14px; font-family: inherit; background: var(--bg); color: var(--text); transition: border-color .15s, box-shadow .15s; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--blue-text); box-shadow: 0 0 0 3px rgba(24,95,165,0.12); }
     textarea { resize: vertical; min-height: 90px; }
     select[multiple] { min-height: 96px; }
     .hint { font-size: 11px; color: var(--text-secondary); margin-top: 3px; }
-
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .grid-3 { display: grid; grid-template-columns: 160px 1fr; gap: 12px; }
-
-    .btn {
-      padding: 9px 18px;
-      border: 0.5px solid var(--border-md);
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      cursor: pointer;
-      font-family: inherit;
-      background: var(--bg);
-      color: var(--text);
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background .15s;
-    }
+    .btn { padding: 9px 18px; border: 0.5px solid var(--border-md); border-radius: var(--radius-md); font-size: 14px; cursor: pointer; font-family: inherit; background: var(--bg); color: var(--text); font-weight: 500; display: inline-flex; align-items: center; gap: 6px; transition: background .15s; }
     .btn:hover { background: var(--bg-secondary); }
     .btn-primary { background: var(--text); color: var(--bg); border-color: transparent; }
     .btn-primary:hover { opacity: .85; }
     .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
     .btn-sm { padding: 5px 12px; font-size: 13px; }
-
     .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.5rem; }
-    .stat-card {
-      background: var(--bg);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: .85rem 1rem;
-      text-align: center;
-    }
+    .stat-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: .85rem 1rem; text-align: center; }
     .stat-num { font-size: 26px; font-weight: 500; }
     .stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-
     .filters { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
-    .filter-btn {
-      padding: 5px 14px;
-      border: 0.5px solid var(--border-md);
-      border-radius: 999px;
-      font-size: 13px;
-      cursor: pointer;
-      background: var(--bg);
-      color: var(--text-secondary);
-      font-family: inherit;
-      transition: all .15s;
-    }
+    .filter-btn { padding: 5px 14px; border: 0.5px solid var(--border-md); border-radius: 999px; font-size: 13px; cursor: pointer; background: var(--bg); color: var(--text-secondary); font-family: inherit; transition: all .15s; }
     .filter-btn.active { background: var(--text); color: var(--bg); border-color: transparent; }
-
-    .ticket-card {
-      background: var(--bg);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 1rem 1.25rem;
-      margin-bottom: 10px;
-      cursor: pointer;
-      transition: border-color .15s, box-shadow .15s;
-    }
+    .ticket-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 10px; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
     .ticket-card:hover { border-color: var(--border-md); box-shadow: 0 2px 8px rgba(0,0,0,.06); }
     .ticket-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
     .ticket-id { font-size: 12px; color: var(--text-secondary); font-weight: 500; font-family: monospace; }
     .ticket-title { font-size: 15px; font-weight: 500; flex: 1; min-width: 120px; }
     .ticket-meta { font-size: 12px; color: var(--text-secondary); display: flex; gap: 14px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
-
     .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
     .badge-new { background: var(--blue-bg); color: var(--blue-text); }
     .badge-inprogress { background: var(--amber-bg); color: var(--amber-text); }
     .badge-done { background: var(--green-bg); color: var(--green-text); }
     .badge-pending { background: var(--purple-bg); color: var(--purple-text); }
-
     .tag { display: inline-block; padding: 2px 8px; border-radius: var(--radius-md); font-size: 12px; font-weight: 500; }
     .tag-bug { background: var(--coral-bg); color: var(--coral-text); }
     .tag-check { background: var(--purple-bg); color: var(--purple-text); }
     .tag-new { background: var(--green-bg); color: var(--green-text); }
     .tag-data { background: var(--teal-bg); color: var(--teal-text); }
     .tag-jobcode { background: var(--purple-bg); color: var(--purple-text); font-family: monospace; }
-    .output-tag {
-      display: inline-block; padding: 2px 8px;
-      background: var(--bg-secondary); border: 0.5px solid var(--border);
-      border-radius: var(--radius-md); font-size: 12px; margin: 2px;
-    }
-
+    .output-tag { display: inline-block; padding: 2px 8px; background: var(--bg-secondary); border: 0.5px solid var(--border); border-radius: var(--radius-md); font-size: 12px; margin: 2px; }
     .empty { text-align: center; padding: 4rem 1rem; color: var(--text-secondary); }
     .empty i { font-size: 40px; display: block; margin-bottom: .75rem; opacity: .4; }
-
-    .modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,.4); z-index: 200;
-      align-items: center; justify-content: center; padding: 1rem;
-    }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 200; align-items: center; justify-content: center; padding: 1rem; }
     .modal-overlay.open { display: flex; }
-    .modal {
-      background: var(--bg); border-radius: var(--radius-lg);
-      padding: 1.75rem; max-width: 580px; width: 100%;
-      max-height: 88vh; overflow-y: auto; position: relative;
-    }
-    .modal-close {
-      position: absolute; top: 14px; right: 14px;
-      border: none; background: none; cursor: pointer;
-      color: var(--text-secondary); font-size: 22px; line-height: 1;
-    }
+    .modal { background: var(--bg); border-radius: var(--radius-lg); padding: 1.75rem; max-width: 580px; width: 100%; max-height: 88vh; overflow-y: auto; position: relative; }
+    .modal-close { position: absolute; top: 14px; right: 14px; border: none; background: none; cursor: pointer; color: var(--text-secondary); font-size: 22px; line-height: 1; }
     .modal-close:hover { color: var(--text); }
-
-    .toast {
-      position: fixed; bottom: 1.5rem; right: 1.5rem;
-      background: var(--text); color: var(--bg);
-      padding: 10px 20px; border-radius: var(--radius-md);
-      font-size: 14px; opacity: 0; transition: opacity .3s;
-      pointer-events: none; z-index: 999; max-width: 320px;
-    }
+    .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--text); color: var(--bg); padding: 10px 20px; border-radius: var(--radius-md); font-size: 14px; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 999; max-width: 320px; }
     .toast.show { opacity: 1; }
-
     .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
     .view { display: none; }
     .view.active { display: block; }
-
     .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; }
     .detail-label { color: var(--text-secondary); }
     .member-chip { display:inline-flex;align-items:center;gap:5px;padding:3px 10px 3px 5px;background:var(--bg-secondary);border:0.5px solid var(--border);border-radius:999px;font-size:12px;margin:2px; }
@@ -260,13 +108,12 @@
     .avatar-sm { width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;background:var(--blue-bg);color:var(--blue-text); }
     .tl-wrap { border-left:1.5px solid var(--border);padding-left:12px;margin-top:4px; }
     .tl-item { position:relative;margin-bottom:7px;font-size:12px;color:var(--text-secondary);line-height:1.5; }
-    .tl-item::before { content:'';position:absolute;left:-17px;top:5px;width:7px;height:7px;border-radius:50%;background:var(--border-md);border:1.5px solid var(--bg); }
+    .tl-item::before { content:"";position:absolute;left:-17px;top:5px;width:7px;height:7px;border-radius:50%;background:var(--border-md);border:1.5px solid var(--bg); }
     .tl-item.tl-latest::before { background:var(--blue-text); }
     .status-pills { display:flex;gap:6px;flex-wrap:wrap; }
     .status-pill { padding:5px 12px;border:0.5px solid var(--border-md);border-radius:999px;font-size:12px;cursor:pointer;background:var(--bg);color:var(--text-secondary);font-family:inherit; }
     .status-pill.sel { background:var(--text);color:var(--bg);border-color:transparent; }
     .g2 { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
-
     @media (max-width: 600px) {
       .grid-2, .grid-3 { grid-template-columns: 1fr; }
       .stats-grid { grid-template-columns: repeat(2,1fr); }
@@ -275,64 +122,38 @@
   </style>
 </head>
 <body>
-
 <nav class="nav">
   <div class="nav-brand">
     <i class="ti ti-chart-dots-3" aria-hidden="true"></i>
     <span>Dashboard Team · Ticket</span>
   </div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="switchTab('submit', this)">
-      <i class="ti ti-plus" aria-hidden="true"></i> ส่ง Ticket
-    </button>
-    <button class="nav-tab" onclick="switchTab('board', this)">
-      <i class="ti ti-layout-kanban" aria-hidden="true"></i> ดู Ticket ทั้งหมด
-    </button>
-    <button class="nav-tab" onclick="switchTab('team', this)">
-      <i class="ti ti-users" aria-hidden="true"></i> จัดการทีม
-    </button>
+    <button class="nav-tab active" onclick="switchTab('submit', this)"><i class="ti ti-plus" aria-hidden="true"></i> ส่ง Ticket</button>
+    <button class="nav-tab" onclick="switchTab('board', this)"><i class="ti ti-layout-kanban" aria-hidden="true"></i> ดู Ticket ทั้งหมด</button>
+    <button class="nav-tab" onclick="switchTab('team', this)"><i class="ti ti-users" aria-hidden="true"></i> จัดการทีม</button>
   </div>
 </nav>
 
 <div class="container">
-
   <!-- SUBMIT VIEW -->
   <div id="view-submit" class="view active">
-
     <div class="card">
       <div class="section-header"><i class="ti ti-briefcase" aria-hidden="true"></i> ข้อมูลงาน</div>
       <div class="grid-3">
-        <div class="form-group">
-          <label>รหัสงาน (Job Code)<span class="check">*</span></label>
-          <input type="text" id="f-jobcode" placeholder="JOB-2024-001">
-        </div>
-        <div class="form-group">
-          <label>ชื่องาน (Job Name)<span class="check">*</span></label>
-          <input type="text" id="f-jobname" placeholder="เช่น รายงานยอดขายรายสัปดาห์ Marketing Q3">
-        </div>
+        <div class="form-group"><label>รหัสงาน (Job Code)<span class="check">*</span></label><input type="text" id="f-jobcode" placeholder="JOB-2024-001"></div>
+        <div class="form-group"><label>ชื่องาน (Job Name)<span class="check">*</span></label><input type="text" id="f-jobname" placeholder="เช่น รายงานยอดขายรายสัปดาห์ Marketing Q3"></div>
       </div>
     </div>
-
     <div class="card">
       <div class="section-header"><i class="ti ti-user" aria-hidden="true"></i> ข้อมูลผู้ส่ง</div>
       <div class="grid-2">
-        <div class="form-group">
-          <label>ชื่อ-นามสกุล<span class="check">*</span></label>
-          <input type="text" id="f-name" placeholder="เช่น สมชาย ใจดี">
-        </div>
-        <div class="form-group">
-          <label>ทีม / แผนก<span class="check">*</span></label>
-          <input type="text" id="f-team" placeholder="เช่น Sales, Marketing, Finance">
-        </div>
+        <div class="form-group"><label>ชื่อ-นามสกุล<span class="check">*</span></label><input type="text" id="f-name" placeholder="เช่น สมชาย ใจดี"></div>
+        <div class="form-group"><label>ทีม / แผนก<span class="check">*</span></label><input type="text" id="f-team" placeholder="เช่น Sales, Marketing, Finance"></div>
       </div>
     </div>
-
     <div class="card">
       <div class="section-header"><i class="ti ti-ticket" aria-hidden="true"></i> รายละเอียด Ticket</div>
-      <div class="form-group">
-        <label>หัวข้อ Ticket<span class="check">*</span></label>
-        <input type="text" id="f-title" placeholder="สรุปปัญหา หรือ requirement ให้กระชับ">
-      </div>
+      <div class="form-group"><label>หัวข้อ Ticket<span class="check">*</span></label><input type="text" id="f-title" placeholder="สรุปปัญหา หรือ requirement ให้กระชับ"></div>
       <div class="grid-2">
         <div class="form-group">
           <label>ประเภท<span class="check">*</span></label>
@@ -353,10 +174,7 @@
           </select>
         </div>
       </div>
-      <div class="form-group">
-        <label>รายละเอียด<span class="check">*</span></label>
-        <textarea id="f-desc" placeholder="อธิบายปัญหา หรือ requirement ให้ชัดเจน — ต้องการข้อมูลอะไร, ใช้ที่ไหน, ผลลัพธ์แบบไหน"></textarea>
-      </div>
+      <div class="form-group"><label>รายละเอียด<span class="check">*</span></label><textarea id="f-desc" placeholder="อธิบายปัญหา หรือ requirement ให้ชัดเจน"></textarea></div>
       <div class="grid-2">
         <div class="form-group">
           <label>Output ที่ต้องการ</label>
@@ -370,22 +188,13 @@
           </select>
           <div class="hint">Ctrl/Cmd + คลิก เพื่อเลือกหลายรายการ</div>
         </div>
-        <div class="form-group">
-          <label>แหล่งข้อมูลที่เกี่ยวข้อง</label>
-          <textarea id="f-source" style="min-height:96px" placeholder="เช่น Google Ads, Shopify, MySQL orders, LINE OA..."></textarea>
-        </div>
+        <div class="form-group"><label>แหล่งข้อมูลที่เกี่ยวข้อง</label><textarea id="f-source" style="min-height:96px" placeholder="เช่น Google Ads, Shopify, MySQL..."></textarea></div>
       </div>
-      <div class="form-group" style="max-width:220px">
-        <label>Deadline ที่ต้องการ</label>
-        <input type="date" id="f-deadline">
-      </div>
+      <div class="form-group" style="max-width:220px"><label>Deadline ที่ต้องการ</label><input type="date" id="f-deadline"></div>
     </div>
-
     <div style="display:flex;justify-content:flex-end;gap:8px">
       <button class="btn" onclick="clearForm()"><i class="ti ti-trash" aria-hidden="true"></i> ล้างฟอร์ม</button>
-      <button class="btn btn-primary" id="submit-btn" onclick="submitTicket()">
-        <i class="ti ti-send" aria-hidden="true"></i> ส่ง Ticket
-      </button>
+      <button class="btn btn-primary" id="submit-btn" onclick="submitTicket()"><i class="ti ti-send" aria-hidden="true"></i> ส่ง Ticket</button>
     </div>
   </div>
 
@@ -418,32 +227,25 @@
     </div>
     <div id="ticket-list"></div>
   </div>
-
 </div>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
   <div class="modal" id="modal-content"></div>
 </div>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ============================================================
-// CONFIG — แก้ไขค่านี้หลัง deploy Apps Script
-// ============================================================
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec';
-// ============================================================
-
 const STORAGE_KEY = 'dash_tickets_v3';
 let tickets = [];
 let currentFilter = 'all';
+let currentEditId = null;
 const typeLabel = { bug:'แจ้งปัญหา', check:'ขอเช็คข้อมูล/โลจิก', new:'งานใหม่', data:'ขอข้อมูล' };
 const statusLabel = { new:'ใหม่', inprogress:'กำลังทำ', done:'เสร็จแล้ว', pending:'รอข้อมูล' };
 const DEFAULT_MEMBERS = ['อภิสิทธิ์','สมชาย','วิชัย','นภา','ปัทมา','กิตติ','รัตนา','ธนวัฒน์'];
 const MEMBERS_KEY = 'dash_team_members_v1';
 let TEAM_MEMBERS = [];
+
 function loadMembers() {
   try { TEAM_MEMBERS = JSON.parse(localStorage.getItem(MEMBERS_KEY) || 'null') || [...DEFAULT_MEMBERS]; } catch(e) { TEAM_MEMBERS = [...DEFAULT_MEMBERS]; }
 }
@@ -453,75 +255,32 @@ function addMember() {
   const name = input.value.trim();
   if (!name) { toast('⚠️ กรุณากรอกชื่อ'); return; }
   if (TEAM_MEMBERS.includes(name)) { toast('มีชื่อนี้อยู่แล้ว'); return; }
-  TEAM_MEMBERS.push(name);
-  saveMembers();
-  input.value = '';
-  renderTeamList();
-  toast('เพิ่ม ' + name + ' แล้ว');
+  TEAM_MEMBERS.push(name); saveMembers(); input.value = ''; renderTeamList(); toast('เพิ่ม ' + name + ' แล้ว');
 }
 function deleteMember(name) {
   if (!confirm('ลบ "' + name + '" ออกจากทีม?')) return;
-  TEAM_MEMBERS = TEAM_MEMBERS.filter(m => m !== name);
-  saveMembers();
-  renderTeamList();
-  toast('ลบ ' + name + ' แล้ว');
+  TEAM_MEMBERS = TEAM_MEMBERS.filter(m => m !== name); saveMembers(); renderTeamList(); toast('ลบ ' + name + ' แล้ว');
 }
 function renderTeamList() {
-  const el = document.getElementById('team-list');
-  if (!el) return;
+  const el = document.getElementById('team-list'); if (!el) return;
   if (!TEAM_MEMBERS.length) { el.innerHTML = '<p style="font-size:13px;color:var(--text-secondary)">ยังไม่มีสมาชิก</p>'; return; }
-  el.innerHTML = TEAM_MEMBERS.map((m,i) => `
-    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border)">
-      <div style="width:32px;height:32px;border-radius:50%;background:var(--blue-bg);color:var(--blue-text);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500">${m.slice(0,2)}</div>
-      <span style="flex:1;font-size:14px">${m}</span>
-      <button class="btn btn-sm" onclick="deleteMember('${m}')" style="color:#E24B4A;border-color:#F5C4B3;font-size:12px">
-        <i class="ti ti-trash" aria-hidden="true"></i> ลบ
-      </button>
-    </div>
-  `).join('');
+  el.innerHTML = TEAM_MEMBERS.map(m => `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border)"><div style="width:32px;height:32px;border-radius:50%;background:var(--blue-bg);color:var(--blue-text);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500">${m.slice(0,2)}</div><span style="flex:1;font-size:14px">${m}</span><button class="btn btn-sm" onclick="deleteMember('${m}')" style="color:#E24B4A;border-color:#F5C4B3;font-size:12px"><i class="ti ti-trash" aria-hidden="true"></i> ลบ</button></div>`).join('');
 }
 function initTicket(t) {
+  if(!t) return t;
   if(!t.assignees) t.assignees=[];
-  if(!t.supervisor===undefined) t.supervisor='';
-  if(!t.tester===undefined) t.tester='';
+  if(!t.supervisor) t.supervisor='';
+  if(!t.tester) t.tester='';
   if(!t.startTime) t.startTime='';
   if(!t.endTime) t.endTime='';
   if(!t.logs) t.logs=[];
   return t;
 }
 
-async function loadTickets() {
-  const lb = document.getElementById('loading-bar');
-  if (lb) lb.style.display = 'block';
-  // ดึงจาก Google Sheet ก่อน ถ้าไม่ได้ค่อย fallback localStorage
-  if (GAS_URL && GAS_URL !== 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec') {
-    try {
-      const url = GAS_URL + '?action=getAll';
-      const res = await fetch(url);
-      const data = await res.json();
-      if (data.status === 'ok' && Array.isArray(data.tickets)) {
-        tickets = data.tickets;
-        saveLocal();
-        if (lb) lb.style.display = 'none';
-        return;
-      }
-    } catch(e) {
-      console.warn('ดึงจาก Sheet ไม่ได้ ใช้ local cache แทน', e);
-    }
-  }
-  // fallback: ใช้ localStorage
-  try { tickets = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { tickets = []; }
-  if (lb) lb.style.display = 'none';
-}
-function saveLocal() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets));
-}
-// sync การอัปเดต ticket กลับไป Sheet
-function syncUpdate(ticket) {
-  if (!GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec') return;
-  sendToSheet({ action:'update', ...ticket });
-}
+// ===== GAS =====
+function hasGAS() { return GAS_URL && GAS_URL !== 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec'; }
 function sendToSheet(data) {
+  if (!hasGAS()) return;
   if (data.action === 'delete') {
     fetch(GAS_URL + '?action=delete&id=' + encodeURIComponent(data.id), { mode:'no-cors' }).catch(() => {});
     return;
@@ -537,6 +296,7 @@ function sendToSheet(data) {
     fetch(GAS_URL + '?' + p.toString(), { mode:'no-cors' }).catch(() => {});
     return;
   }
+  // add
   const p = new URLSearchParams({
     action:'add', id:data.id||'', jobcode:data.jobcode||'',
     jobname:data.jobname||'', name:data.name||'', team:data.team||'',
@@ -547,28 +307,40 @@ function sendToSheet(data) {
   });
   fetch(GAS_URL + '?' + p.toString(), { mode:'no-cors' }).catch(() => {});
 }
-  const slim = { ...data };
-  if (slim.logs && slim.logs.length > 10) slim.logs = slim.logs.slice(-10);
-  const url = GAS_URL + '?payload=' + encodeURIComponent(JSON.stringify(slim));
-  fetch(url, { mode:'no-cors' }).catch(() => {});
-}
-function genId() {
-  return 'TKT-' + String(tickets.length + 1 + Date.now() % 1000).padStart(4,'0').slice(-4);
-}
+function syncUpdate(ticket) { sendToSheet({ action:'update', ...ticket }); }
 
-function switchTab(tab, el, skipLoad) {
+async function loadTickets() {
+  const lb = document.getElementById('loading-bar');
+  if (lb) lb.style.display = 'block';
+  if (hasGAS()) {
+    try {
+      const res = await fetch(GAS_URL + '?action=getAll');
+      const data = await res.json();
+      if (data.status === 'ok' && Array.isArray(data.tickets)) {
+        tickets = data.tickets; saveLocal();
+        if (lb) lb.style.display = 'none'; return;
+      }
+    } catch(e) { console.warn('Sheet error', e); }
+  }
+  try { tickets = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { tickets = []; }
+  if (lb) lb.style.display = 'none';
+}
+function saveLocal() { localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets)); }
+function genId() { return 'TKT-' + String(tickets.length + 1 + Date.now() % 1000).padStart(4,'0').slice(-4); }
+
+// ===== TABS =====
+function switchTab(tab, el) {
   document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('view-' + tab).classList.add('active');
   location.hash = tab;
-  if (tab === 'board' && !skipLoad) { loadTickets().then(() => renderBoard()); }
+  if (tab === 'board') { loadTickets().then(() => renderBoard()); }
   if (tab === 'team') renderTeamList();
 }
-function toast(msg, duration = 3000) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
+
+function toast(msg, duration=3000) {
+  const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show');
   setTimeout(() => el.classList.remove('show'), duration);
 }
 
@@ -582,98 +354,50 @@ function clearForm() {
 
 async function submitTicket() {
   const v = id => document.getElementById(id).value.trim();
-  const jobcode = v('f-jobcode'), jobname = v('f-jobname');
-  const name = v('f-name'), team = v('f-team');
-  const title = v('f-title'), type = v('f-type'), desc = v('f-desc');
-
-  if (!jobcode || !jobname || !name || !team || !title || !type || !desc) {
-    toast('⚠️ กรุณากรอกข้อมูลที่มี * ให้ครบ');
-    return;
-  }
-
+  const jobcode=v('f-jobcode'), jobname=v('f-jobname'), name=v('f-name'), team=v('f-team'), title=v('f-title'), type=v('f-type'), desc=v('f-desc');
+  if (!jobcode||!jobname||!name||!team||!title||!type||!desc) { toast('⚠️ กรุณากรอกข้อมูลที่มี * ให้ครบ'); return; }
   const outputs = Array.from(document.getElementById('f-output').selectedOptions).map(o => o.value);
-  const ticket = {
-    id: genId(),
-    jobcode, jobname, name, team, title, type,
-    priority: v('f-priority') || 'medium',
-    desc, outputs,
-    source: v('f-source'),
-    deadline: v('f-deadline'),
-    status: 'new',
-    created: new Date().toISOString(),
-    note: ''
-  };
-
+  const ticket = { id:genId(), jobcode, jobname, name, team, title, type, priority:v('f-priority')||'medium', desc, outputs, source:v('f-source'), deadline:v('f-deadline'), status:'new', created:new Date().toISOString(), note:'' };
   const btn = document.getElementById('submit-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> กำลังส่ง...';
-
-  tickets.unshift(ticket);
-  saveLocal();
-
-  if (GAS_URL && GAS_URL !== 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec') {
-    sendToSheet(ticket);
-  }
-
-  btn.disabled = false;
-  btn.innerHTML = '<i class="ti ti-send" aria-hidden="true"></i> ส่ง Ticket';
-  clearForm();
-  toast('✅ ส่ง ' + ticket.id + ' เรียบร้อย! (บันทึกลง Google Sheet)');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> กำลังส่ง...';
+  tickets.unshift(ticket); saveLocal();
+  sendToSheet(ticket);
+  btn.disabled = false; btn.innerHTML = '<i class="ti ti-send" aria-hidden="true"></i> ส่ง Ticket';
+  clearForm(); toast('✅ ส่ง ' + ticket.id + ' เรียบร้อย!');
 }
 
+// ===== BOARD =====
 function renderBoard() { renderStats(); renderList(); }
-
 function renderStats() {
-  const c = { total: tickets.length, new: 0, inprogress: 0, done: 0 };
-  tickets.forEach(t => { if (c[t.status] !== undefined) c[t.status]++; });
+  const c = { total:tickets.length, new:0, inprogress:0, done:0 };
+  tickets.forEach(t => { if (c[t.status]!==undefined) c[t.status]++; });
   document.getElementById('stats-grid').innerHTML = `
     <div class="stat-card"><div class="stat-num">${c.total}</div><div class="stat-label">ทั้งหมด</div></div>
     <div class="stat-card"><div class="stat-num" style="color:var(--blue-text)">${c.new}</div><div class="stat-label">ใหม่</div></div>
     <div class="stat-card"><div class="stat-num" style="color:#854F0B">${c.inprogress}</div><div class="stat-label">กำลังทำ</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:var(--green-text)">${c.done}</div><div class="stat-label">เสร็จแล้ว</div></div>
-  `;
+    <div class="stat-card"><div class="stat-num" style="color:var(--green-text)">${c.done}</div><div class="stat-label">เสร็จแล้ว</div></div>`;
 }
-
 function setFilter(f, el) {
   currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  renderList();
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); renderList();
 }
-
 function renderList() {
   const list = document.getElementById('ticket-list');
   const filtered = currentFilter === 'all' ? tickets : tickets.filter(t => t.status === currentFilter);
-  if (!filtered.length) {
-    list.innerHTML = '<div class="empty"><i class="ti ti-inbox" aria-hidden="true"></i>ยังไม่มี ticket</div>';
-    return;
-  }
+  if (!filtered.length) { list.innerHTML = '<div class="empty"><i class="ti ti-inbox" aria-hidden="true"></i>ยังไม่มี ticket</div>'; return; }
   list.innerHTML = filtered.map(t => {
     const d = t.deadline ? new Date(t.deadline).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'}) : '-';
     const c = new Date(t.created).toLocaleDateString('th-TH',{day:'numeric',month:'short'});
     const pLabel = t.priority==='high'?'🔴 เร่งด่วน':t.priority==='low'?'🟢 ไม่เร่ง':'🟡 ปานกลาง';
     return `<div class="ticket-card" onclick="openDetail('${t.id}')">
-      <div class="ticket-header">
-        <span class="ticket-id">${t.id}</span>
-        ${t.jobcode?`<span class="tag tag-jobcode">${t.jobcode}</span>`:''}
-        <span class="ticket-title">${t.title}</span>
-        <span class="badge badge-${t.status}">${statusLabel[t.status]||t.status}</span>
-      </div>
-      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:4px">
-        ${t.jobname?`<span style="font-size:12px;color:var(--text-secondary)">${t.jobname}</span>`:''}
-        <span class="tag tag-${t.type}">${typeLabel[t.type]||t.type}</span>
-        <span class="output-tag">${t.team}</span>
-      </div>
-      <div class="ticket-meta">
-        <span><i class="ti ti-user" aria-hidden="true"></i> ${t.name}</span>
-        <span>${pLabel}</span>
-        <span><i class="ti ti-calendar" aria-hidden="true"></i> ${d}</span>
-        <span style="margin-left:auto">${c}</span>
-      </div>
+      <div class="ticket-header"><span class="ticket-id">${t.id}</span>${t.jobcode?`<span class="tag tag-jobcode">${t.jobcode}</span>`:''}<span class="ticket-title">${t.title}</span><span class="badge badge-${t.status}">${statusLabel[t.status]||t.status}</span></div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:4px">${t.jobname?`<span style="font-size:12px;color:var(--text-secondary)">${t.jobname}</span>`:''}<span class="tag tag-${t.type}">${typeLabel[t.type]||t.type}</span><span class="output-tag">${t.team}</span></div>
+      <div class="ticket-meta"><span><i class="ti ti-user" aria-hidden="true"></i> ${t.name}</span><span>${pLabel}</span><span><i class="ti ti-calendar" aria-hidden="true"></i> ${d}</span><span style="margin-left:auto">${c}</span></div>
     </div>`;
   }).join('');
 }
 
+// ===== MODAL =====
 function renderChips(assignees) {
   return assignees.map(m=>`<span class="member-chip"><span class="avatar-sm">${m.slice(0,2)}</span>${m}<button onclick="removeAssignee('${m}')" aria-label="ลบ">×</button></span>`).join('');
 }
@@ -685,8 +409,7 @@ function toLocalDT(iso){ return iso ? new Date(iso).toISOString().slice(0,16) : 
 
 function openDetail(id) {
   currentEditId = id;
-  const t = initTicket(tickets.find(x => x.id === id));
-  if (!t) return;
+  const t = initTicket(tickets.find(x => x.id === id)); if (!t) return;
   const pLabel = t.priority==='high'?'🔴 เร่งด่วน':t.priority==='low'?'🟢 ไม่เร่ง':'🟡 ปานกลาง';
   const dl = t.deadline ? new Date(t.deadline).toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'}) : '-';
   const memberOpts = TEAM_MEMBERS.map(m=>`<option value="${m}">${m}</option>`).join('');
@@ -700,7 +423,6 @@ function openDetail(id) {
     </div>
     ${t.jobname?`<div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px"><i class="ti ti-briefcase" aria-hidden="true"></i> ${t.jobname}</div>`:''}
     <div style="font-size:17px;font-weight:500;margin-bottom:1.25rem">${t.title}</div>
-
     <div class="section-header">รายละเอียด</div>
     <p style="font-size:14px;line-height:1.7;margin-bottom:1rem;white-space:pre-wrap">${t.desc}</p>
     <div class="detail-grid" style="margin-bottom:1rem">
@@ -709,36 +431,27 @@ function openDetail(id) {
       <div><span class="detail-label">ความสำคัญ:</span> ${pLabel}</div>
       <div><span class="detail-label">Deadline:</span> ${dl}</div>
     </div>
-    ${t.outputs?.length?`<div class="section-header">Output ที่ต้องการ</div><div style="margin-bottom:1rem">${t.outputs.map(o=>`<span class="output-tag">${o}</span>`).join('')}</div>`:''}
+    ${t.outputs?.length?`<div class="section-header">Output</div><div style="margin-bottom:1rem">${t.outputs.map(o=>`<span class="output-tag">${o}</span>`).join('')}</div>`:''}
     ${t.source?`<div class="section-header">แหล่งข้อมูล</div><p style="font-size:13px;margin-bottom:1rem">${t.source}</p>`:''}
-
     <hr class="divider">
     <div class="section-header"><i class="ti ti-activity" aria-hidden="true"></i> สถานะ</div>
     <div class="status-pills" style="margin-bottom:1.25rem">
       ${['new','inprogress','pending','done'].map(s=>`<button class="status-pill${t.status===s?' sel':''}" onclick="setStatusInModal('${t.id}','${s}')">${s==='new'?'🆕 ใหม่':s==='inprogress'?'⚙️ กำลังทำ':s==='pending'?'⏳ รอข้อมูล':'✅ เสร็จแล้ว'}</button>`).join('')}
     </div>
-
     <hr class="divider">
     <div class="section-header"><i class="ti ti-clock" aria-hidden="true"></i> เวลาดำเนินการ</div>
     <div class="g2" style="margin-bottom:8px">
-      <div>
-        <label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block">เวลาเริ่ม</label>
-        <input type="datetime-local" id="dt-start" value="${toLocalDT(t.startTime)}" style="font-size:13px">
-      </div>
-      <div>
-        <label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block">เวลาจบ</label>
-        <input type="datetime-local" id="dt-end" value="${toLocalDT(t.endTime)}" style="font-size:13px">
-      </div>
+      <div><label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block">เวลาเริ่ม</label><input type="datetime-local" id="dt-start" value="${toLocalDT(t.startTime)}" style="font-size:13px"></div>
+      <div><label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block">เวลาจบ</label><input type="datetime-local" id="dt-end" value="${toLocalDT(t.endTime)}" style="font-size:13px"></div>
     </div>
     <div style="display:flex;gap:6px;margin-bottom:1.25rem">
       <button class="btn btn-sm" onclick="stampNow('dt-start')"><i class="ti ti-player-play" aria-hidden="true"></i> เริ่มตอนนี้</button>
       <button class="btn btn-sm" onclick="stampNow('dt-end')"><i class="ti ti-player-stop" aria-hidden="true"></i> จบตอนนี้</button>
     </div>
-
     <hr class="divider">
     <div class="section-header"><i class="ti ti-users" aria-hidden="true"></i> ทีมงาน</div>
     <div style="margin-bottom:8px">
-      <label style="font-size:12px;color:var(--text-secondary);margin-bottom:4px;display:block">คนทำงาน (เลือกได้หลายคน)</label>
+      <label style="font-size:12px;color:var(--text-secondary);margin-bottom:4px;display:block">คนทำงาน</label>
       <div id="assignee-chips" style="margin-bottom:6px;min-height:28px">${renderChips(t.assignees)}</div>
       <div style="display:flex;gap:6px">
         <select id="add-member" style="flex:1;font-size:13px"><option value="">-- เลือกเพิ่ม --</option>${memberOpts}</select>
@@ -746,48 +459,31 @@ function openDetail(id) {
       </div>
     </div>
     <div class="g2" style="margin-bottom:1.25rem">
-      <div>
-        <label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block"><i class="ti ti-crown" aria-hidden="true"></i> คนดูแล (Supervisor)</label>
-        <select id="sel-supervisor" style="font-size:13px">
-          <option value="">-- ไม่มี --</option>
-          ${TEAM_MEMBERS.map(m=>`<option value="${m}"${t.supervisor===m?' selected':''}>${m}</option>`).join('')}
-        </select>
-      </div>
-      <div>
-        <label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block"><i class="ti ti-test-pipe" aria-hidden="true"></i> คนตรวจงาน (Tester)</label>
-        <select id="sel-tester" style="font-size:13px">
-          <option value="">-- ไม่มี --</option>
-          ${TEAM_MEMBERS.map(m=>`<option value="${m}"${t.tester===m?' selected':''}>${m}</option>`).join('')}
-        </select>
-      </div>
+      <div><label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block"><i class="ti ti-crown" aria-hidden="true"></i> คนดูแล</label>
+        <select id="sel-supervisor" style="font-size:13px"><option value="">-- ไม่มี --</option>${TEAM_MEMBERS.map(m=>`<option value="${m}"${t.supervisor===m?' selected':''}>${m}</option>`).join('')}</select></div>
+      <div><label style="font-size:12px;color:var(--text-secondary);margin-bottom:3px;display:block"><i class="ti ti-test-pipe" aria-hidden="true"></i> คนตรวจงาน</label>
+        <select id="sel-tester" style="font-size:13px"><option value="">-- ไม่มี --</option>${TEAM_MEMBERS.map(m=>`<option value="${m}"${t.tester===m?' selected':''}>${m}</option>`).join('')}</select></div>
     </div>
-
     <hr class="divider">
     <div class="section-header"><i class="ti ti-notes" aria-hidden="true"></i> Note / Log</div>
     <textarea id="note-input" style="width:100%;min-height:64px;margin-bottom:8px;font-size:13px" placeholder="Note จากทีม...">${t.note||''}</textarea>
     <div style="display:flex;gap:6px;margin-bottom:1rem">
-      <input type="text" id="log-input" placeholder="เพิ่ม log entry เช่น ส่ง draft แล้ว, แก้สูตร..." style="flex:1;font-size:13px">
+      <input type="text" id="log-input" placeholder="เพิ่ม log entry..." style="flex:1;font-size:13px">
       <button class="btn btn-sm" onclick="addLog('${t.id}')"><i class="ti ti-plus" aria-hidden="true"></i> Log</button>
     </div>
     <div id="log-display">${renderLogs(t.logs)}</div>
-
     <hr class="divider">
     <div style="display:flex;gap:8px;justify-content:space-between;align-items:center">
-      <button class="btn" onclick="deleteTicket('${t.id}')" style="color:#E24B4A;border-color:#F5C4B3">
-        <i class="ti ti-trash" aria-hidden="true"></i> ลบ Ticket
-      </button>
+      <button class="btn" onclick="deleteTicket('${t.id}')" style="color:#E24B4A;border-color:#F5C4B3"><i class="ti ti-trash" aria-hidden="true"></i> ลบ Ticket</button>
       <div style="display:flex;gap:8px">
         <button class="btn" onclick="closeModal()">ปิด</button>
         <button class="btn btn-primary" onclick="saveDetail('${t.id}')"><i class="ti ti-device-floppy" aria-hidden="true"></i> บันทึก</button>
       </div>
-    </div>
-  `;
+    </div>`;
   document.getElementById('modal-overlay').classList.add('open');
 }
 
-function stampNow(fieldId) {
-  document.getElementById(fieldId).value = new Date().toISOString().slice(0,16);
-}
+function stampNow(f) { document.getElementById(f).value = new Date().toISOString().slice(0,16); }
 function setStatusInModal(id, status) {
   const t = initTicket(tickets.find(x => x.id === id));
   if(t){ t.status=status; saveLocal(); syncUpdate(t); }
@@ -796,13 +492,10 @@ function setStatusInModal(id, status) {
   toast('สถานะ → ' + statusLabel[status]);
 }
 function addAssignee(id) {
-  const sel = document.getElementById('add-member');
-  const val = sel.value; if(!val) return;
+  const sel = document.getElementById('add-member'); const val = sel.value; if(!val) return;
   const t = initTicket(tickets.find(x => x.id === id));
   if(!t.assignees.includes(val)){ t.assignees.push(val); saveLocal(); }
-  document.getElementById('assignee-chips').innerHTML = renderChips(t.assignees);
-  sel.value='';
-  toast('เพิ่ม ' + val);
+  document.getElementById('assignee-chips').innerHTML = renderChips(t.assignees); sel.value=''; toast('เพิ่ม ' + val);
 }
 function removeAssignee(name) {
   const t = initTicket(tickets.find(x => x.id === currentEditId));
@@ -811,13 +504,10 @@ function removeAssignee(name) {
   toast('ลบ ' + name + ' ออกแล้ว');
 }
 function addLog(id) {
-  const input = document.getElementById('log-input');
-  const text = input.value.trim(); if(!text) return;
+  const input = document.getElementById('log-input'); const text = input.value.trim(); if(!text) return;
   const t = initTicket(tickets.find(x => x.id === id));
-  t.logs.push({time: new Date().toISOString(), text});
-  saveLocal(); input.value='';
-  document.getElementById('log-display').innerHTML = renderLogs(t.logs);
-  toast('เพิ่ม log แล้ว');
+  t.logs.push({time: new Date().toISOString(), text}); saveLocal(); input.value='';
+  document.getElementById('log-display').innerHTML = renderLogs(t.logs); toast('เพิ่ม log แล้ว');
 }
 function saveDetail(id) {
   const t = initTicket(tickets.find(x => x.id === id));
@@ -828,42 +518,19 @@ function saveDetail(id) {
   const ev = document.getElementById('dt-end').value;
   t.startTime = sv ? new Date(sv).toISOString() : '';
   t.endTime   = ev ? new Date(ev).toISOString() : '';
-  saveLocal();
-  syncUpdate(t); // sync กลับ Sheet
-  toast('บันทึกเรียบร้อย');
-  closeModal();
+  saveLocal(); syncUpdate(t); toast('บันทึกเรียบร้อย'); closeModal();
 }
-
 function deleteTicket(id) {
   if (!confirm('ลบ Ticket นี้? ข้อมูลจะถูกลบออกจาก Google Sheet ด้วย')) return;
-  // ลบใน Sheet
-  if (GAS_URL && GAS_URL !== 'https://script.google.com/macros/s/AKfycbzzhfnNW7QBYZCbvNiCvjRkgu71mOziO-WAiD2DdKlQIzdHhX6V-FMWs2hFToVnRtNm/exec') {
-    sendToSheet({ action:'delete', id });
-  }
-  // ลบใน local
-  tickets = tickets.filter(t => t.id !== id);
-  saveLocal();
-  toast('ลบ ticket แล้ว');
-  closeModal();
+  sendToSheet({ action:'delete', id });
+  tickets = tickets.filter(t => t.id !== id); saveLocal(); toast('ลบ ticket แล้ว'); closeModal();
 }
-
-let currentEditId = null;
 function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
-  currentEditId = null;
-  renderBoard();
+  document.getElementById('modal-overlay').classList.remove('open'); currentEditId = null; renderBoard();
 }
 function handleOverlayClick(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
 
-function updateStatus(id, status) {
-  const t = tickets.find(x => x.id === id);
-  if (t) { t.status = status; saveLocal(); toast('อัปเดตสถานะ → ' + statusLabel[status]); openDetail(id); }
-}
-function saveNote(id) {
-  const t = tickets.find(x => x.id === id);
-  if (t) { t.note = document.getElementById('note-input').value; saveLocal(); toast('บันทึก note แล้ว'); }
-}
-
+// ===== INIT =====
 loadMembers();
 const _initHash = location.hash.replace('#','') || 'submit';
 const _initIdx = ({submit:0,board:1,team:2})[_initHash] ?? 0;
@@ -874,11 +541,8 @@ if (_initBtn) {
   _initBtn.classList.add('active');
   document.getElementById('view-'+_initHash).classList.add('active');
 }
-if (_initHash === 'board') {
-  loadTickets().then(() => renderBoard());
-} else if (_initHash === 'team') {
-  renderTeamList();
-}
+if (_initHash === 'board') { loadTickets().then(() => renderBoard()); }
+else if (_initHash === 'team') { renderTeamList(); }
 </script>
 </body>
 </html>
