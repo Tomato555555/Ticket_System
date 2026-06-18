@@ -309,6 +309,30 @@
     .tl-item::before { content:""; position:absolute; left:-17px; top:5px; width:7px; height:7px; border-radius:50%; background:var(--border); border:2px solid var(--bg); }
     .tl-item.latest::before { background: var(--blue); }
 
+    /* DAILY TASKS */
+    .daily-task-row {
+      display: grid;
+      grid-template-columns: 100px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 10px 12px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 6px;
+    }
+    .daily-task-row.done-task { opacity: .6; }
+    .daily-task-row.done-task .dt-text { text-decoration: line-through; }
+    .dt-date { font-size: 11px; color: var(--text2); font-weight: 600; white-space: nowrap; }
+    .dt-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .dt-text { font-size: 13px; color: var(--text); }
+    .dt-member { font-size: 11px; color: var(--blue); font-weight: 500; }
+    .dt-actions { display: flex; gap: 4px; }
+    .dt-check { width: 18px; height: 18px; border: 1.5px solid var(--border); border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; background: var(--bg); flex-shrink: 0; }
+    .dt-check.checked { background: var(--green); border-color: var(--green); color: #fff; }
+    .dt-del { border: none; background: none; cursor: pointer; color: var(--text2); font-size: 15px; line-height: 1; padding: 0; flex-shrink: 0; }
+    .dt-del:hover { color: var(--red); }
+
     /* TOAST */
     .toast {
       position: fixed; bottom: 1.5rem; right: 1.5rem;
@@ -508,6 +532,7 @@ function initTicket(t) {
   if (!t.startTime) t.startTime = '';
   if (!t.endTime) t.endTime = '';
   if (!t.logs) t.logs = [];
+  if (!t.dailyTasks) t.dailyTasks = [];
   return t;
 }
 
@@ -733,6 +758,24 @@ function openDetail(id) {
     </div>
 
     <hr class="divider">
+    <div class="section-title"><i class="ti ti-checklist"></i> งานย่อยรายวัน</div>
+    <div id="daily-task-list" style="margin-bottom:10px">${renderDailyTasks(t.dailyTasks, t.id)}</div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="field"><label>วันที่ทำ</label><input type="date" id="dt-new-date" value="${new Date().toISOString().slice(0,10)}" style="font-size:13px"></div>
+        <div class="field"><label>ชื่อคนทำ</label>
+          <select id="dt-new-member" style="font-size:13px">
+            <option value="">-- เลือกชื่อ --</option>${memberOpts}
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>งานที่ทำ</label><input type="text" id="dt-new-text" placeholder="เช่น ออกแบบ schema, เขียน API endpoint..." style="font-size:13px"></div>
+      <div style="display:flex;justify-content:flex-end">
+        <button class="btn btn-sm btn-primary" onclick="addDailyTask('${t.id}')"><i class="ti ti-plus"></i> เพิ่มงานย่อย</button>
+      </div>
+    </div>
+
+    <hr class="divider">
     <div class="section-title"><i class="ti ti-notes"></i> Note / Log</div>
     <textarea id="note-input" style="width:100%;min-height:60px;margin-bottom:8px;font-size:13px" placeholder="Note จากทีม...">${t.note||''}</textarea>
     <div style="display:flex;gap:6px;margin-bottom:1rem">
@@ -809,6 +852,51 @@ function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open'); currentEditId = null; renderBoard();
 }
 function handleOverlayClick(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+
+// DAILY TASKS
+function renderDailyTasks(tasks, ticketId) {
+  if (!tasks || !tasks.length) return '<p style="font-size:12px;color:var(--text2);padding:4px 0">ยังไม่มีงานย่อย</p>';
+  const sorted = [...tasks].sort((a, b) => new Date(b.date) - new Date(a.date));
+  return sorted.map(dt => {
+    const d = new Date(dt.date).toLocaleDateString('th-TH', { weekday:'short', day:'numeric', month:'short' });
+    return `<div class="daily-task-row${dt.done?' done-task':''}" id="dt-row-${dt.id}">
+      <div class="dt-date">${d}</div>
+      <div class="dt-body">
+        <span class="dt-text">${dt.text}</span>
+        <span class="dt-member"><i class="ti ti-user" style="font-size:10px"></i> ${dt.member||'-'}</span>
+      </div>
+      <div class="dt-actions">
+        <div class="dt-check${dt.done?' checked':''}" onclick="toggleDailyTask('${ticketId}','${dt.id}')" title="${dt.done?'ยังไม่เสร็จ':'ทำเสร็จแล้ว'}">${dt.done?'✓':''}</div>
+        <button class="dt-del" onclick="deleteDailyTask('${ticketId}','${dt.id}')" title="ลบ">×</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function addDailyTask(ticketId) {
+  const date = document.getElementById('dt-new-date').value;
+  const member = document.getElementById('dt-new-member').value;
+  const text = document.getElementById('dt-new-text').value.trim();
+  if (!date || !text) { toast('⚠️ กรุณากรอกวันที่และรายละเอียดงาน'); return; }
+  const t = initTicket(tickets.find(x => x.id === ticketId)); if (!t) return;
+  const newTask = { id: Date.now().toString(), date, member, text, done: false };
+  t.dailyTasks.push(newTask); saveLocal();
+  document.getElementById('dt-new-text').value = '';
+  document.getElementById('daily-task-list').innerHTML = renderDailyTasks(t.dailyTasks, ticketId);
+  toast('เพิ่มงานย่อยแล้ว');
+}
+function toggleDailyTask(ticketId, taskId) {
+  const t = initTicket(tickets.find(x => x.id === ticketId)); if (!t) return;
+  const dt = t.dailyTasks.find(d => d.id === taskId); if (!dt) return;
+  dt.done = !dt.done; saveLocal();
+  document.getElementById('daily-task-list').innerHTML = renderDailyTasks(t.dailyTasks, ticketId);
+  toast(dt.done ? '✅ ทำเสร็จแล้ว' : 'ยกเลิกสถานะเสร็จแล้ว');
+}
+function deleteDailyTask(ticketId, taskId) {
+  const t = initTicket(tickets.find(x => x.id === ticketId)); if (!t) return;
+  t.dailyTasks = t.dailyTasks.filter(d => d.id !== taskId); saveLocal();
+  document.getElementById('daily-task-list').innerHTML = renderDailyTasks(t.dailyTasks, ticketId);
+  toast('ลบงานย่อยแล้ว');
+}
 
 // INIT
 loadMembers();
